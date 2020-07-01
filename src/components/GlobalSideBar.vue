@@ -23,13 +23,14 @@ export default {
 };
 </script>
 <style lang='scss' scoped>
+@import '../assets/css/config.scss';
 .GlobalSideBar-navList {
   width: 100%;
   padding: 8px 0;
   border-radius: 2px;
   background: #ffffff;
   font-size: 14px;
-  color: #8590a6;
+  color: $fontColor;
   .GlobalSideBar-navItem {
     padding: 0 20px;
     display: flex;

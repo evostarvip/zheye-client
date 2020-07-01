@@ -56,7 +56,7 @@ export default {
   .Actions-wrap {
     display: flex;
     align-items: center;
-    color: #8590a6;
+    color: $fontColor;
     font-size: 14px;
     margin-left: 24px;
   }
