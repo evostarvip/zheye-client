@@ -20,6 +20,14 @@ ul,li{
 input{
   font: normal;
 }
-input:focus,a:focus{
+textarea,input:focus,a:focus{
   outline: none;
+}
+textarea{
+  resize: none;
+}
+button{
+  border:none;
+  text-align: center;
+  border-radius: 4px;
 }
