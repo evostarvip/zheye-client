@@ -22,14 +22,18 @@
       <button class="AskButton" :class="{HideButton:isFocus}" @click="showModal=true">提问</button>
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
-        <div class="AppHeader-profile">
-          <button class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
+        <div v-if="isLogin" class="AppHeader-profile">
+          <div class="AppHeader-msg">
+            <span class="iconfont icon-weibiaoti-_fuzhi"></span>
+            <!-- <pover-content></pover-content> -->
+          </div>
+
           <img
-            v-if="isLogin"
             src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
             class="AppHeader-profileAvatar"
           />
         </div>
+        <button v-else class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
       </div>
     </div>
     <!-- 提问遮罩层 -->
@@ -63,7 +67,7 @@
     <modal :showModal="showLoginModal" @cancel="showLoginModal = false">
       <template v-slot:dialog>
         <div class="Login-wrap">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tabs v-model="activeName">
             <el-tab-pane label="立即注册" name="register">
               <div class="Sign-wrap">
                 <input class="SignInput" type="text" placeholder="手机号或者邮箱" />
@@ -71,8 +75,7 @@
               <div class="Sign-wrap">
                 <input class="SignInput" type="password" placeholder="密码" />
               </div>
-              <div class="RemeberMe">
-              </div>
+              <div class="RemeberMe"></div>
               <button class="SubmitButton">注册</button>
             </el-tab-pane>
             <el-tab-pane label="密码登陆" name="login">
@@ -99,7 +102,8 @@ import Modal from "@/components/Modal.vue";
 export default {
   name: "nav-header",
   components: {
-    Modal
+    Modal,
+    // PoverContent
   },
   data() {
     return {
@@ -109,9 +113,9 @@ export default {
       disabled: true,
       askTip: "",
       askTitle: "",
-      isLogin: false,
-      activeName: "login",//elmentui
-      checked:false,//elmentui
+      isLogin: true,
+      activeName: "login", //elmentui
+      checked: false //elmentui
     };
   },
   methods: {
@@ -143,15 +147,18 @@ export default {
 <style lang='scss' >
 @import "../assets/css/config";
 .AppHeader {
-  position: relative;
+  position: sticky;
+  height: 52px;
+  top: 0;
+  left: 0;
   width: 100%;
   background: #fff;
   box-shadow: 0 1px 3px rgba(26, 26, 26, 0.1);
   &-inner {
-    position: relative;
     display: flex;
     width: 1000px;
     height: 52px;
+
     padding: 0 16px;
     margin: 0 auto;
     align-items: center;
@@ -200,11 +207,8 @@ export default {
       flex: 1;
       height: 24px;
       padding-left: 12px;
-    }
-    &-input::placeholder {
       font-size: 15px;
     }
-
     .icon-icon161603 {
       font-size: 18px;
     }
@@ -242,11 +246,25 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    .AppHeader-profileAvatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 2px;
+    .AppHeader-profile {
+      display: flex;
+      align-items: center;
+      .AppHeader-msg {
+        position: relative;
+        .icon-weibiaoti-_fuzhi {
+          font-size: 22px;
+          color: $fontColor;
+        }
+      }
+
+      .AppHeader-profileAvatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 2px;
+        margin-left: 30px;
+      }
     }
+
     .LoginButton {
       font-size: 14px;
       padding: 6px 12px;
@@ -337,14 +355,14 @@ export default {
         font-size: 14px;
       }
     }
-    .RemeberMe{
+    .RemeberMe {
       margin-top: 14px;
       text-align: right;
-      .el-checkbox__input.is-checked+.el-checkbox__label{
-        color:$mainColor
+      .el-checkbox__input.is-checked + .el-checkbox__label {
+        color: $mainColor;
       }
     }
-    .SubmitButton{
+    .SubmitButton {
       width: 100%;
       background: $mainColor;
       color: #fff;
