@@ -23,14 +23,16 @@
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
         <div class="AppHeader-profile">
+          <button class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
           <img
+            v-if="isLogin"
             src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
             class="AppHeader-profileAvatar"
           />
         </div>
       </div>
     </div>
-    <!-- 遮罩层 -->
+    <!-- 提问遮罩层 -->
     <modal :showModal="showModal" @cancel="showModal = false">
       <template v-slot:dialog>
         <div class="QuesModal-content">
@@ -51,9 +53,41 @@
               <div class="AskFieldTip">{{askTip}}</div>
             </div>
           </div>
-
+          <textarea class="AskDetial" placeholder="输入问题背景、条件等详细信息（选填）"></textarea>
           <!-- 发布问题 -->
           <button class="AskButton" :disabled="disabled" @click="publishQues">发布问题</button>
+        </div>
+      </template>
+    </modal>
+    <!-- 登陆遮罩层 -->
+    <modal :showModal="showLoginModal" @cancel="showLoginModal = false">
+      <template v-slot:dialog>
+        <div class="Login-wrap">
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="立即注册" name="register">
+              <div class="Sign-wrap">
+                <input class="SignInput" type="text" placeholder="手机号或者邮箱" />
+              </div>
+              <div class="Sign-wrap">
+                <input class="SignInput" type="password" placeholder="密码" />
+              </div>
+              <div class="RemeberMe">
+              </div>
+              <button class="SubmitButton">注册</button>
+            </el-tab-pane>
+            <el-tab-pane label="密码登陆" name="login">
+              <div class="Sign-wrap">
+                <input class="SignInput" type="text" placeholder="手机号或者邮箱" />
+              </div>
+              <div class="Sign-wrap">
+                <input class="SignInput" type="password" placeholder="密码" />
+              </div>
+              <div class="RemeberMe">
+                <el-checkbox v-model="checked">7天内免登录</el-checkbox>
+              </div>
+              <button class="SubmitButton">登陆</button>
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </template>
     </modal>
@@ -71,9 +105,13 @@ export default {
     return {
       isFocus: false,
       showModal: false,
+      showLoginModal: false,
       disabled: true,
       askTip: "",
-      askTitle: ""
+      askTitle: "",
+      isLogin: false,
+      activeName: "login",//elmentui
+      checked:false,//elmentui
     };
   },
   methods: {
@@ -102,7 +140,7 @@ export default {
   }
 };
 </script>
-<style lang='scss' scoped>
+<style lang='scss' >
 @import "../assets/css/config";
 .AppHeader {
   position: relative;
@@ -143,6 +181,7 @@ export default {
       content: "";
     }
   }
+  // 搜索提问
   .SearchBar {
     color: $fontColor;
     background: #f6f6f6;
@@ -163,7 +202,6 @@ export default {
       padding-left: 12px;
     }
     &-input::placeholder {
-      color: $fontColor;
       font-size: 15px;
     }
 
@@ -179,6 +217,12 @@ export default {
     background: #fff;
     width: 380px;
   }
+  .AskDetial {
+    min-height: 78px;
+    border: 1px solid #ebebeb;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
   .AskButton {
     background: $mainColor;
     color: #ffffff;
@@ -187,12 +231,12 @@ export default {
     border-radius: 3px;
     padding: 6px 14px;
     margin-left: 16px;
-    transition: opacity 0.3s linear;
+    transition: display 0.3s linear 0.3;
   }
   .HideButton {
-    opacity: 0;
+    display: none;
   }
-
+  // 用户
   &-userInfo {
     flex: 1;
     display: flex;
@@ -203,10 +247,22 @@ export default {
       height: 30px;
       border-radius: 2px;
     }
+    .LoginButton {
+      font-size: 14px;
+      padding: 6px 12px;
+      color: $mainColor;
+      background: #fff;
+      border: 1px solid $mainColor;
+      &:hover {
+        cursor: pointer;
+        background: rgba(0, 132, 255, 0.1);
+      }
+    }
   }
   .webfont {
     color: $mainColor;
   }
+  //提问
   .QuesModal-content {
     width: 536px;
     padding: 24px 32px;
@@ -222,16 +278,12 @@ export default {
       }
       .AskTitle-wrap {
         flex: 1;
-        min-height: 108px;
+        min-height: 90px;
         .AskTitle {
           width: 100%;
           border: none;
           font-size: 18px;
           color: #858fa6;
-          &::placeholder {
-            font-size: 18px;
-            color: #858fa6;
-          }
         }
         .AskFieldTip {
           text-align: right;
@@ -252,6 +304,55 @@ export default {
       &:disabled {
         opacity: 0.5;
       }
+    }
+  }
+  // 登陆
+  .Login-wrap {
+    width: 400px;
+    padding: 0 24px 30px;
+    .el-tabs__nav-wrap::after {
+      background-color: transparent !important;
+    }
+    .el-tabs__active-bar {
+      background: $mainColor;
+      height: 3px;
+    }
+    .el-tabs__item {
+      font-size: 16px;
+      color: #444;
+    }
+    .el-tabs__item.is-active {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    .Sign-wrap {
+      width: 100%;
+      height: 36px;
+      padding: 12px;
+      border-bottom: 1px solid #ebebeb;
+      .SignInput {
+        width: 96%;
+        border: none;
+        height: 46px;
+        font-size: 14px;
+      }
+    }
+    .RemeberMe{
+      margin-top: 14px;
+      text-align: right;
+      .el-checkbox__input.is-checked+.el-checkbox__label{
+        color:$mainColor
+      }
+    }
+    .SubmitButton{
+      width: 100%;
+      background: $mainColor;
+      color: #fff;
+      height: 36px;
+      line-height: 36px;
+      margin-top: 30px;
+      font-size: 14px;
+      border-radius: 4px;
     }
   }
 }

@@ -10,6 +10,9 @@ html,body{
   min-width: 1226px;
   font-size: 16px;
 }
+body{
+  font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+}
 a{
   text-decoration: none;
   color: inherit;
@@ -25,6 +28,10 @@ textarea,input:focus,a:focus{
 }
 textarea{
   resize: none;
+}
+textarea::placeholder,input::placeholder{
+  color: #8590a6;
+  font-size: inherit;
 }
 button{
   border:none;
