@@ -11,16 +11,19 @@
         <span class="iconfont icon-arrow-down"></span>
       </template>
       <rich-content v-else @collapseText="isRead = !isRead"></rich-content>
+      <feed-actions></feed-actions>
     </div>
   </div>
 </template>
 <script>
 import RichContent from "@/components/RichContent.vue";
+import FeedActions from "@/components/FeedActions.vue";
 
 export default {
   name: "feed-content",
   components: {
-    RichContent
+    RichContent,
+    FeedActions
   },
   data() {
     return {

@@ -10,7 +10,7 @@
 import NavHeader from "@/components/NavHeader.vue";
 
 export default {
-  name: "Home",
+  name: "home",
   components: {
     NavHeader
   }
