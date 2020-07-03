@@ -63,7 +63,7 @@
     <modal :showModal="showLoginModal" @cancel="showLoginModal = false">
       <template v-slot:dialog>
         <div class="Login-wrap">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tabs v-model="activeName" >
             <el-tab-pane label="立即注册" name="register">
               <div class="Sign-wrap">
                 <input class="SignInput" type="text" placeholder="手机号或者邮箱" />
