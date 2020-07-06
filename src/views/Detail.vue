@@ -34,7 +34,7 @@
         <div class="QuestionHeader-footer-inner">
           <div class="QuestionButton-groups">
             <button class="QuestionButton-follow">关注问题</button>
-            <button class="QuestionButton-ask">
+            <button class="QuestionButton-ask" @click="isAsk=true">
               <span class="iconfont icon-pen"></span>
               写回答
             </button>
@@ -59,6 +59,16 @@
         </div>
       </div>
     </div>
+    <!-- 编辑器 -->
+    <div class="AnswerWrap" v-if="isAsk">
+      <div class="AnswerHeader">
+        <img src="https://pic3.zhimg.com/71bd66aba6bf36075a6a3c9d383fe64d_s.jpg" alt=""  class="AuthorAvator">
+        <span class="AuthorName">capricorn</span>
+      </div>
+      <editor @change="contentChange"></editor>
+      <button class="AnswerButton" >提交回答</button>
+    </div>
+
     <!-- 回答 -->
     <div class="QuestionMain">
       <div class="List">
@@ -75,20 +85,30 @@
 <script>
 import RichContent from "@/components/RichContent.vue";
 import FeedActions from "@/components/FeedActions.vue";
+import Editor from "@/components/Editor.vue";
+
 
 export default {
   name: "detail",
   components: {
     RichContent,
-    FeedActions
+    FeedActions,
+    Editor
   },
   data() {
     return {
+      isAsk:false,
       tagList: ["计算机", "计算机专业", "编程"],
       answerList:[
         {},{},{}
       ]
     };
+  },
+  methods:{
+    //监听编辑器
+    contentChange(data){
+      console.log(data)
+    }
   }
 };
 </script>
@@ -226,7 +246,32 @@ export default {
     }
   }
 }
-
+// 编辑器
+.AnswerWrap{
+   width: 1000px;
+  margin: 10px auto;
+  padding: 0 16px 60px 16px;
+  background: #ffffff;
+  .AnswerHeader{
+    display: flex;
+    align-items: center;
+    font-size:15px ;
+    font-weight: 600;
+    padding:16px 0;
+    .AuthorAvator{
+      margin:0  10px;
+    }
+  }
+  .AnswerButton{
+    margin-top: 8px;
+    padding: 0 16px;
+    background: $mainColor;
+    color: #ffffff;
+    line-height: 36px;
+    float: right;
+    cursor: pointer;
+  }
+}
 // 回答
 .QuestionMain {
   width: 1000px;
