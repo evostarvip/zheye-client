@@ -1,13 +1,12 @@
 <!-- 详情页回答列表 -->
 <template>
-  <div class="ListItem" >
-          <rich-content></rich-content>
-          <feed-actions @changeReview="isReview=!isReview"></feed-actions>
-          <transition name="fade">
-            <comment v-if="isReview"></comment>
-          </transition>
-        </div>
-   
+  <div class="ListItem">
+    <rich-content></rich-content>
+    <feed-actions @changeReview="isReview=!isReview" :actions="answerList.actions"></feed-actions>
+    <transition name="fade">
+      <comment v-if="isReview"></comment>
+    </transition>
+  </div>
 </template>
 <script>
 import RichContent from "@/components/RichContent.vue";
@@ -16,25 +15,28 @@ import Comment from "@/components/Comment.vue";
 
 export default {
   name: "feed-item",
-  components:{
-      RichContent,
-      FeedActions,
-      Comment
+  components: {
+    RichContent,
+    FeedActions,
+    Comment
   },
-  data(){
-    return{
-      isReview:false,
-    }
+  props: {
+    answerList: Object
   },
-  methods:{
-    changeReview(){
-      console.log("changeReview")
+  data() {
+    return {
+      isReview: false
+    };
+  },
+  methods: {
+    changeReview() {
+      console.log("changeReview");
     }
   }
 };
 </script>
 <style lang='scss' scoped>
-@import '../assets/css/config';
+@import "../assets/css/config";
 .fade-enter-active,
 .fade-leave-active {
   opacity: 1;
@@ -43,13 +45,13 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
-.TopstoryItem{
-    background: #fff;
-    border-bottom: 1px solid #f0f2f7;
-    padding: 20px;
-    .ContentItem-title{
-        font-size: 18px;
-        font-weight: 600;
-    }
+.TopstoryItem {
+  background: #fff;
+  border-bottom: 1px solid #f0f2f7;
+  padding: 20px;
+  .ContentItem-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
 }
 </style>

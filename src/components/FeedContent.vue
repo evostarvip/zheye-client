@@ -13,6 +13,7 @@
       </template>
       <rich-content v-else @collapseText="isRead = !isRead"></rich-content>
   
+      
     </div>
   </div>
 </template>

@@ -2,7 +2,7 @@
   <div class="Topstory-container">
     <div class="Topstory-mainColumn">
       <div  v-for="(item,index) in feedList" :key="index">
-           <feed-item :feedList="item"></feed-item>
+           <feed-item :feedList="item" ></feed-item>
       </div>
     </div>
     <div class="GlobalSideBar">
@@ -24,6 +24,7 @@ export default {
     return {
      feedList:[
        {
+         id:1,
          title:"计算机学生在大学里应该以数据结构为重还是技术为重",
          author:"1号回答者",
          summary:"很多人简历里面写熟悉某某框架，其实不算是优势，重点还在于原理。 数据结构和算法是面试的重点，链表，二叉树，图，队列，堆栈等数据结构... ",
@@ -37,6 +38,7 @@ export default {
          }
        },
         {
+           id:2,
          title:"计算机学生在大学里应该以数据结构为重还是技术为重",
          author:"1号回答者",
          summary:"很多人简历里面写熟悉某某框架，其实不算是优势，重点还在于原理。 数据结构和算法是面试的重点，链表，二叉树，图，队列，堆栈等数据结构... ",
@@ -50,6 +52,7 @@ export default {
          }
         },
         {
+          id:3,
          title:"计算机学生在大学里应该以数据结构为重还是技术为重",
          author:"1号回答者",
          summary:"很多人简历里面写熟悉某某框架，其实不算是优势，重点还在于原理。 数据结构和算法是面试的重点，链表，二叉树，图，队列，堆栈等数据结构... ",

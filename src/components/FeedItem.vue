@@ -1,7 +1,7 @@
   <!-- 首页feed的每一项 -->
 <template>
   <div class="TopstoryItem">
-    <div class="ContentItem-title">{{feedList.title}}</div>
+    <div class="ContentItem-title" @click="goToDetail(feedList.id)">{{feedList.title}}</div>
      <feed-content :author="feedList.author" :summary="feedList.summary"></feed-content>
     <feed-actions @changeReview="isReview=!isReview" :actions="feedList.actions"></feed-actions>
     <transition name="fade">
@@ -33,6 +33,11 @@ export default {
   methods:{
     changeReview(){
       console.log("changeReview")
+    },
+    //进入详情页
+    goToDetail(id){
+      this.$router.push({path:`detail/${id}`})
+      console.log(id)
     }
   }
 };
@@ -54,6 +59,7 @@ export default {
     .ContentItem-title{
         font-size: 18px;
         font-weight: 600;
+        cursor: pointer;
     }
 }
 </style>
