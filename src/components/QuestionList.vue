@@ -1,33 +1,29 @@
-  <!-- 首页feed的每一项 -->
+<!-- 详情页回答列表 -->
 <template>
-  <div class="TopstoryItem">
-    <div class="ContentItem-title">{{feedList.title}}</div>
-     <feed-content :author="feedList.author" :summary="feedList.summary"></feed-content>
-    <feed-actions @changeReview="isReview=!isReview" :actions="feedList.actions"></feed-actions>
-    <transition name="fade">
-      <comment v-if="isReview"></comment>
-    </transition>
-  </div>
+  <div class="ListItem" >
+          <rich-content></rich-content>
+          <feed-actions @changeReview="isReview=!isReview"></feed-actions>
+          <transition name="fade">
+            <comment v-if="isReview"></comment>
+          </transition>
+        </div>
+   
 </template>
 <script>
-import FeedContent from "@/components/FeedContent.vue"
+import RichContent from "@/components/RichContent.vue";
 import FeedActions from "@/components/FeedActions.vue";
 import Comment from "@/components/Comment.vue";
 
 export default {
   name: "feed-item",
   components:{
-      FeedContent,
+      RichContent,
       FeedActions,
       Comment
-  },
-  props:{
-    feedList:Object
   },
   data(){
     return{
       isReview:false,
-      
     }
   },
   methods:{

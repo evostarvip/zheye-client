@@ -1,3 +1,4 @@
+  <!-- 弹出层 -->
 <template>
   <transition name="fade">
     <div class="modal position" v-show="showModal">

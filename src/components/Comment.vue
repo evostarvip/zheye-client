@@ -1,3 +1,4 @@
+<!-- 评论功能 -->
 <template>
   <div class="Comment">
     <div class="CommentTopBar">19条评论</div>

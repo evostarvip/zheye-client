@@ -1,15 +1,18 @@
+  <!-- 赞同评论等图标 -->
 <template>
   <div class="ContentItem-actions">
-    <div class="Vote-wrap">
+    <div class="Vote-wrap" :class="{ChangeStatus:actions.isAgree}"  @click="changeAgree">
       <span class="icon-down-fill-xs iconfont"></span>
-      <span class="Vote-desc">赞同 10</span>
+      <span
+        class="Vote-desc"
+      >{{ actions.isAgree ? `已赞同 ${actions.agreeNum}` : `赞同 ${actions.agreeNum}`}}</span>
     </div>
-    <div class="Vote-wrap">
+    <div class="Vote-wrap" :class="{ChangeStatus:actions.isDisagree}" >
       <span class="icon-down-fill1-xs iconfont"></span>
     </div>
     <div class="Actions-wrap" @click="changeReview">
       <span class="iconfont icon-pinglun1"></span>
-      <span class="Actions-desc" >{{isReview? "收起评论":`19条评论`}}</span>
+      <span class="Actions-desc">{{isReview? "收起评论":`${actions.reviewNum}条评论`}}</span>
     </div>
     <div class="Actions-wrap">
       <span class="iconfont icon-xiaofeiji"></span>
@@ -19,9 +22,9 @@
       <span class="iconfont icon-shoucang"></span>
       <span class="Actions-desc">收藏</span>
     </div>
-    <div class="Actions-wrap">
+    <div class="Actions-wrap" @click="actions.isLike = !actions.isLike">
       <span class="iconfont icon-xihuan"></span>
-      <span class="Actions-desc">喜欢</span>
+      <span class="Actions-desc">{{actions.isLike?'取消喜欢':'喜欢'}}</span>
     </div>
     <div class="Actions-wrap">
       <span class="iconfont icon-shenglvehao"></span>
@@ -31,6 +34,9 @@
 <script>
 export default {
   name: "feed-action",
+  props: {
+    actions: Object
+  },
   data() {
     return {
       isReview: false
@@ -41,6 +47,15 @@ export default {
     changeReview() {
       this.$emit("changeReview", !this.isReview);
       this.isReview = !this.isReview;
+    },
+    //改变赞同状态
+    changeAgree() {
+      this.actions.isAgree = !this.actions.isAgree;
+      if (this.actions.isAgree) {
+        this.actions.agreeNum++;
+      } else {
+        this.actions.agreeNum--;
+      }
     }
   }
 };
@@ -64,9 +79,6 @@ export default {
     display: flex;
     align-items: center;
     cursor: pointer;
-    &:hover {
-      background: rgba(0, 132, 255, 0.2);
-    }
   }
   .Actions-wrap {
     display: flex;
@@ -79,6 +91,10 @@ export default {
   .Actions-desc,
   .Vote-desc {
     margin-left: 4px;
+  }
+  .ChangeStatus {
+    color: #fff;
+    background: $mainColor;
   }
 }
 </style>
