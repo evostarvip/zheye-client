@@ -1,6 +1,6 @@
 <template>
   <div class="TopstoryItem">
-    <div class="ContentItem-title">计算机学生在大学应该以数据结构算法为重还是技术为重？</div>
+    <div class="ContentItem-title" @click="goToDetail()">计算机学生在大学应该以数据结构算法为重还是技术为重？</div>
      <feed-content></feed-content>
   </div>
 </template>
@@ -8,6 +8,9 @@
 import FeedContent from "@/components/FeedContent.vue"
 export default {
   name: "feed-item",
+  props:{
+
+  },
   components:{
       FeedContent,
   }
