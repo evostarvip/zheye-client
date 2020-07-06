@@ -7,7 +7,7 @@
         class="Vote-desc"
       >{{ actions.isAgree ? `已赞同 ${actions.agreeNum}` : `赞同 ${actions.agreeNum}`}}</span>
     </div>
-    <div class="Vote-wrap" :class="{ChangeStatus:actions.isDisagree}" @click="actions.isDisagree =!actions.isDisagree">
+    <div class="Vote-wrap" :class="{ChangeStatus:actions.isDisagree}" @click="changeDisagree">
       <span class="icon-down-fill1-xs iconfont"></span>
     </div>
     <div class="Actions-wrap" @click="changeReview">
@@ -52,10 +52,20 @@ export default {
     changeAgree() {
       this.actions.isAgree = !this.actions.isAgree;
       if (this.actions.isAgree) {
+        if(this.actions.isDisagree){
+          this.actions.isDisagree=false;
+        }
         this.actions.agreeNum++;
       } else {
         this.actions.agreeNum--;
       }
+    },
+    changeDisagree(){
+       this.actions.isDisagree = !this.actions.isDisagree;
+      if (this.actions.isDisagree &&this.actions.isAgree) {  
+          this.actions.isAgree=false;
+          this.actions.agreeNum--;
+      } 
     }
   }
 };
