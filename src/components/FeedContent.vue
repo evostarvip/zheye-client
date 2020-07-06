@@ -11,7 +11,7 @@
         <span class="iconfont icon-arrow-down"></span>
       </template>
       <rich-content v-else @collapseText="isRead = !isRead"></rich-content>
-      <feed-actions></feed-actions>
+      
     </div>
   </div>
 </template>

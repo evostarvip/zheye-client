@@ -1,23 +1,52 @@
+  <!-- 首页feed的每一项 -->
 <template>
   <div class="TopstoryItem">
-    <div class="ContentItem-title" @click="goToDetail()">计算机学生在大学应该以数据结构算法为重还是技术为重？</div>
+    <div class="ContentItem-title" @click="goToDetail(feedList.id)">{{feedList.title}}</div>
      <feed-content></feed-content>
+    <feed-actions></feed-actions>
   </div>
 </template>
 <script>
 import FeedContent from "@/components/FeedContent.vue"
+import FeedActions from "@/components/FeedActions.vue";
+
 export default {
   name: "feed-item",
-  props:{
-
-  },
   components:{
       FeedContent,
+      FeedActions,
+  },
+  props:{
+    feedList:Object
+  },
+  data(){
+    return{
+      isReview:false,
+      
+    }
+  },
+  methods:{
+    changeReview(){
+      console.log("changeReview")
+    },
+    //进入详情页
+    goToDetail(id){
+      this.$router.push({path:`detail/${id}`})
+      console.log(id)
+    }
   }
 };
 </script>
 <style lang='scss' scoped>
 @import '../assets/css/config';
+.fade-enter-active,
+.fade-leave-active {
+  opacity: 1;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 .TopstoryItem{
     background: #fff;
     border-bottom: 1px solid #f0f2f7;
@@ -25,6 +54,7 @@ export default {
     .ContentItem-title{
         font-size: 18px;
         font-weight: 600;
+        cursor: pointer;
     }
 }
 </style>
