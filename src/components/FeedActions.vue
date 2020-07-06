@@ -7,7 +7,7 @@
         class="Vote-desc"
       >{{ actions.isAgree ? `已赞同 ${actions.agreeNum}` : `赞同 ${actions.agreeNum}`}}</span>
     </div>
-    <div class="Vote-wrap" :class="{ChangeStatus:actions.isDisagree}" >
+    <div class="Vote-wrap" :class="{ChangeStatus:actions.isDisagree}" @click="actions.isDisagree =!actions.isDisagree">
       <span class="icon-down-fill1-xs iconfont"></span>
     </div>
     <div class="Actions-wrap" @click="changeReview">
