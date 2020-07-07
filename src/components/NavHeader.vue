@@ -63,29 +63,28 @@
     <modal :showModal="showLoginModal" @cancel="showLoginModal = false">
       <template v-slot:dialog>
         <div class="Login-wrap">
-          <el-tabs v-model="activeName" >
+          <el-tabs v-model="activeName">
             <el-tab-pane label="立即注册" name="register">
               <div class="Sign-wrap">
-                <input class="SignInput" type="text" placeholder="手机号或者邮箱" />
+                <input class="SignInput" type="text" placeholder="手机号或者邮箱" v-model="regUser" />
               </div>
               <div class="Sign-wrap">
-                <input class="SignInput" type="password" placeholder="密码" />
+                <input class="SignInput" type="password" placeholder="密码" v-model="regPass" />
               </div>
-              <div class="RemeberMe">
-              </div>
-              <button class="SubmitButton">注册</button>
+              <div class="RemeberMe"></div>
+              <button class="SubmitButton" @click="register">注册</button>
             </el-tab-pane>
             <el-tab-pane label="密码登陆" name="login">
               <div class="Sign-wrap">
-                <input class="SignInput" type="text" placeholder="手机号或者邮箱" />
+                <input class="SignInput" type="text" placeholder="手机号或者邮箱"  v-model="loginUser"/>
               </div>
               <div class="Sign-wrap">
-                <input class="SignInput" type="password" placeholder="密码" />
+                <input class="SignInput" type="password" placeholder="密码" v-model="loginPass" />
               </div>
               <div class="RemeberMe">
                 <el-checkbox v-model="checked">7天内免登录</el-checkbox>
               </div>
-              <button class="SubmitButton">登陆</button>
+              <button class="SubmitButton" @click="login">登陆</button>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -103,6 +102,10 @@ export default {
   },
   data() {
     return {
+      regUser: "", //注册手机号
+      regPass: "", //注册密码
+      loginUser:"",//登陆用户
+      loginPass:"",//注册密码
       isFocus: false,
       showModal: false,
       showLoginModal: false,
@@ -110,11 +113,50 @@ export default {
       askTip: "",
       askTitle: "",
       isLogin: false,
-      activeName: "login",//elmentui
-      checked:false,//elmentui
+      activeName: "login", //elmentui
+      checked: false //elmentui
     };
   },
   methods: {
+    //注册
+    register() {
+      let params = {
+        password: this.regPass,
+        username: this.regUser
+      };
+      if (this.regUser && this.regTel) {
+        this.axios.post("/reg", params).then(res => {
+          if (res.status == 200) {
+            this.$message({
+              message: "恭喜你，注册成功，赶紧登陆吧",
+              type: "success"
+            });
+          }
+          this.regUser="";
+          this.regTel="";
+          this.activeName="login"
+        });
+      } else {
+        this.$alert("请填写用户名和密码", "提示");
+      }
+    },
+    //登陆
+    login(){
+      let params = {
+        username:this.loginUser,
+        password:this.loginPass,
+        rememberme:this.checked
+      };
+      this.axios.post("/reg", params).then(res => {
+          if (res.status == 200) {
+            this.$message({
+              message: "登陆成功",
+              type: "success"
+            });
+          }
+          
+        });
+    },
     //监听input选中
     inputFocus() {
       this.isFocus = true;
@@ -337,14 +379,14 @@ export default {
         font-size: 14px;
       }
     }
-    .RemeberMe{
+    .RemeberMe {
       margin-top: 14px;
       text-align: right;
-      .el-checkbox__input.is-checked+.el-checkbox__label{
-        color:$mainColor
+      .el-checkbox__input.is-checked + .el-checkbox__label {
+        color: $mainColor;
       }
     }
-    .SubmitButton{
+    .SubmitButton {
       width: 100%;
       background: $mainColor;
       color: #fff;

@@ -4,9 +4,6 @@
     <div class="QuestionHeader">
       <div class="QuestionHeader-content">
         <div class="QuestionHeader-main">
-          <div class="QuestionHeader-tags">
-            <div class="QuestionHeader-tag" v-for="(item,index) in tagList" :key="index">{{item}}</div>
-          </div>
           <div class="QuestionHeader-title">学计算机很痛苦还要不要学下去</div>
           <div class="QuestionHeader-detail">
             我是一个大一学生，计算机专业。开学时进了学校的一个科技社团，主要学习前端方面的内容。刚开始学习时觉得不太难，也写了很多代码来练习，但后来越学越吃力，感觉很多不会，很多不懂，但却不知道从哪里入手来学，学得也是糟糕透了……
@@ -130,21 +127,6 @@ export default {
   }
   &-main {
     width: 694px;
-  }
-  &-tags {
-    display: flex;
-    align-items: center;
-  }
-  &-tag {
-    margin: 3px 5px 3px 0;
-    height: 30px;
-    padding: 0 12px;
-    font-size: 14px;
-    line-height: 30px;
-    color: $mainColor;
-    vertical-align: top;
-    border-radius: 100px;
-    background: rgba(0, 132, 255, 0.1);
   }
   &-title {
     margin-top: 12px;
