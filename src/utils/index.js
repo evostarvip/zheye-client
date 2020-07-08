@@ -10,3 +10,12 @@ function isLogin(){
          }
       });
 }
+//监听滑动条事件
+function listenScroll(){
+
+}
+
+export {
+    isLogin,
+    listenScroll
+}

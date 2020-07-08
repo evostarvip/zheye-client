@@ -7,7 +7,6 @@ import axios from 'axios';
 import VueAxios from 'vue-axios'
 import 'element-ui/lib/theme-chalk/index.css';
 
-axios.defaults.baseURL = 'http://localhost:8888';
 axios.interceptors.response.use(function(response){
   return response
 },(error)=>{

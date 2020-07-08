@@ -23,11 +23,6 @@
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
         <div class="AppHeader-profile">
-          <!-- <img
-            v-if="isLogin"
-            src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
-            class="AppHeader-profileAvatar"
-          />-->
 
           <el-popover v-if="isLogin" placement="bottom" width="150" trigger="click">
             <div class="Quit" @click="quitLogin">退出登陆</div>
@@ -62,7 +57,7 @@
               <div class="AskFieldTip">{{askTip}}</div>
             </div>
           </div>
-          <textarea class="AskDetial" placeholder="输入问题背景、条件等详细信息（选填）"></textarea>
+          <textarea class="AskDetial" placeholder="输入问题背景、条件等详细信息（选填）" v-model="askDetail"></textarea>
           <!-- 发布问题 -->
           <button class="AskButton" :disabled="disabled" @click="publishQues">发布问题</button>
         </div>
@@ -120,7 +115,8 @@ export default {
       showLoginModal: false,
       disabled: true,
       askTip: "",
-      askTitle: "",
+      askTitle: "",//提问问题
+      askDetail:"",//提问细节
       isLogin: false,
       activeName: "login", //elmentui
       checked: false //elmentui
@@ -198,8 +194,20 @@ export default {
     },
     //发表问题
     publishQues() {
-      console.log("发表问题");
-      this.showModal = false;
+      let params = {
+        title:this.askTitle,
+        content:this.askDetail
+      }
+      this.axios.post('/question/add',params).then(res=>{
+        if(res.status == 200){
+           this.$message({
+            message: "提问成功",
+            type: "success"
+          });
+           this.showModal = false;
+        }
+      })
+
     }
   }
 };

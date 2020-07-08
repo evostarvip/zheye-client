@@ -4,10 +4,10 @@
     <div class="QuestionHeader">
       <div class="QuestionHeader-content">
         <div class="QuestionHeader-main">
-          <div class="QuestionHeader-title">学计算机很痛苦还要不要学下去</div>
+          <div class="QuestionHeader-title">{{title}}</div>
           <div class="QuestionHeader-detail">
-            我是一个大一学生，计算机专业。开学时进了学校的一个科技社团，主要学习前端方面的内容。刚开始学习时觉得不太难，也写了很多代码来练习，但后来越学越吃力，感觉很多不会，很多不懂，但却不知道从哪里入手来学，学得也是糟糕透了……
-            <div class="QuestionHeader-more">
+            {{summary}}
+            <div class="QuestionHeader-more" @click="showMore" v-if="isShowMore">
               <span>显示全部</span>
               <span class="iconfont icon-arrow-down"></span>
             </div>
@@ -59,20 +59,24 @@
     <!-- 编辑器 -->
     <div class="AnswerWrap" v-if="isAsk">
       <div class="AnswerHeader">
-        <img src="https://pic3.zhimg.com/71bd66aba6bf36075a6a3c9d383fe64d_s.jpg" alt=""  class="AuthorAvator">
+        <img
+          src="https://pic3.zhimg.com/71bd66aba6bf36075a6a3c9d383fe64d_s.jpg"
+          alt
+          class="AuthorAvator"
+        />
         <span class="AuthorName">capricorn</span>
       </div>
-      <editor @change="contentChange"></editor>
-      <button class="AnswerButton" >提交回答</button>
+      <editor @change="contentChange" :isClear="isClear"></editor>
+      <button class="AnswerButton" @click="submitAnswer">提交回答</button>
     </div>
 
     <!-- 回答 -->
-    <div class="QuestionMain">
+    <div class="QuestionMain"> 
       <div class="List">
         <div class="ListHeader">174个回答</div>
-        <div class="ListItem" v-for="(item,index) in answerList" :key='index'>
-          <rich-content></rich-content>
-          <feed-actions></feed-actions>
+        <div class="ListItem" v-for="(item,index) in answerList" :key="index">
+          <rich-content :content="item" ></rich-content>
+          <feed-actions :actions="item.actions"></feed-actions>
         </div>
       </div>
     </div>
@@ -83,8 +87,7 @@
 import RichContent from "@/components/RichContent.vue";
 import FeedActions from "@/components/FeedActions.vue";
 import Editor from "@/components/Editor.vue";
-
-
+let detail,id;
 export default {
   name: "detail",
   components: {
@@ -94,17 +97,54 @@ export default {
   },
   data() {
     return {
-      isAsk:false,
+      isShowMore:true,
+      title: "",
+      summary: "",
+      isAsk: false,
       tagList: ["计算机", "计算机专业", "编程"],
-      answerList:[
-        {},{},{}
-      ]
+      answerList: [],
+      eidtor:"",
+      isClear:false,
     };
   },
-  methods:{
+  mounted() {
+    id = this.$route.params.id;
+    this.axios.get(`/question/detail?qid=${id}`).then(res => {
+      if (res.status == 200) {
+        this.answerList = res.data.answerList;
+        this.title=res.data.title;
+        this.summary=res.data.summary;
+        detail = res.data.detail;
+      }
+    });
+  },
+  methods: {
     //监听编辑器
-    contentChange(data){
+    contentChange(data) {
       console.log(data)
+     this.eidtor=data;
+    },
+    //显示更多
+    showMore(){
+      this.summary = detail;
+      this.isShowMore = false;
+    },
+    //提交回答
+    submitAnswer(){
+      console.log(this.eidtor)
+      let params = {
+        content:this.eidtor,
+        qid:id
+      };
+      this.axios.post("/answer/add",params).then(res=>{
+        if(res.status == 200){
+           this.$message({
+            message: "回答成功",
+            type: "success"
+          });
+          this.isClear = true;
+        }
+      })
     }
   }
 };
@@ -229,22 +269,22 @@ export default {
   }
 }
 // 编辑器
-.AnswerWrap{
-   width: 1000px;
+.AnswerWrap {
+  width: 1000px;
   margin: 10px auto;
   padding: 0 16px 60px 16px;
   background: #ffffff;
-  .AnswerHeader{
+  .AnswerHeader {
     display: flex;
     align-items: center;
-    font-size:15px ;
+    font-size: 15px;
     font-weight: 600;
-    padding:16px 0;
-    .AuthorAvator{
-      margin:0  10px;
+    padding: 16px 0;
+    .AuthorAvator {
+      margin: 0 10px;
     }
   }
-  .AnswerButton{
+  .AnswerButton {
     margin-top: 8px;
     padding: 0 16px;
     background: $mainColor;
@@ -268,8 +308,8 @@ export default {
       line-height: 50px;
       font-weight: 600;
     }
-    .ListItem{
-      padding:16px 0;
+    .ListItem {
+      padding: 16px 0;
       border-bottom: 1px solid #ebebeb;
     }
   }

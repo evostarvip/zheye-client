@@ -2,33 +2,39 @@
   <div class="RichContent-wrapper">
     <div class="RichContent-inner">
       <template v-if="!isRead">
-        <b>用户1:</b>
-        很多人简历里面写熟悉某某框架，其实不算是优势，重点还在于原理。 数据结构和算法是面试的重点，链表，二叉树，图，队列，堆栈等数据结构...
-        <span 
-          class="ContentItem-more"
-          @click="isRead = !isRead"
-        >阅读全文</span>
-        <span class="iconfont icon-arrow-down"></span>
+        <b>{{author.name}}</b>
+        {{summary}}
+        <span class="ContentItem-more" @click="isRead = !isRead" v-if="isShow">阅读全文</span>
+        <span class="iconfont icon-arrow-down" v-if="isShow"></span>
       </template>
       <rich-content v-else @collapseText="isRead = !isRead"></rich-content>
-      
     </div>
   </div>
 </template>
 <script>
 import RichContent from "@/components/RichContent.vue";
 import FeedActions from "@/components/FeedActions.vue";
-
+('<p><span style="font-weight: b......');
 export default {
   name: "feed-content",
   components: {
     RichContent,
     FeedActions
   },
+  props: {
+    author: Object,
+    summary: String
+  },
   data() {
     return {
-      isRead: false
+      isRead: false,
+      isShow:true
     };
+  },
+  mounted(){
+    if(this.summary.length<36){
+      this.isShow=false;
+    }
   }
 };
 </script>

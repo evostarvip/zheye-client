@@ -2,14 +2,14 @@
   <div class="ContentItem-actions">
      <div class="Vote-wrap">
          <span class="icon-down-fill-xs iconfont"></span>
-         <span class="Vote-desc" >赞同 10</span>
+         <span class="Vote-desc" >赞同{{actions.agreeNum}}</span>
      </div>
       <div class="Vote-wrap">
          <span class="icon-down-fill1-xs iconfont"></span>
      </div>
     <div class="Actions-wrap">
       <span class="iconfont icon-pinglun1"></span>
-      <span class="Actions-desc">评论</span>
+      <span class="Actions-desc">{{actions.reviewNum}}条评论</span>
     </div>
     <div class="Actions-wrap">
       <span class="iconfont icon-xiaofeiji"></span>
@@ -31,8 +31,12 @@
 </template>
 <script>
 export default {
-  name: "feed-action"
+  name: "feed-action",
+  props:{
+    actions:Object
+  }
 };
+
 </script>
 <style lang='scss' scoped>
 @import '../assets/css/config.scss';
