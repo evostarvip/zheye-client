@@ -23,12 +23,21 @@
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
         <div class="AppHeader-profile">
-          <button class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
-          <img
+          <!-- <img
             v-if="isLogin"
             src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
             class="AppHeader-profileAvatar"
-          />
+          />-->
+
+          <el-popover v-if="isLogin" placement="bottom" width="150" trigger="click">
+            <div class="Quit" @click="quitLogin">退出登陆</div>
+            <img
+              slot="reference"
+              src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
+              class="AppHeader-profileAvatar"
+            />
+          </el-popover>
+          <button v-else class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
         </div>
       </div>
     </div>
@@ -76,7 +85,7 @@
             </el-tab-pane>
             <el-tab-pane label="密码登陆" name="login">
               <div class="Sign-wrap">
-                <input class="SignInput" type="text" placeholder="手机号或者邮箱"  v-model="loginUser"/>
+                <input class="SignInput" type="text" placeholder="手机号或者邮箱" v-model="loginUser" />
               </div>
               <div class="Sign-wrap">
                 <input class="SignInput" type="password" placeholder="密码" v-model="loginPass" />
@@ -104,8 +113,8 @@ export default {
     return {
       regUser: "", //注册手机号
       regPass: "", //注册密码
-      loginUser:"",//登陆用户
-      loginPass:"",//注册密码
+      loginUser: "", //登陆用户
+      loginPass: "", //注册密码
       isFocus: false,
       showModal: false,
       showLoginModal: false,
@@ -132,30 +141,43 @@ export default {
               type: "success"
             });
           }
-          this.regUser="";
-          this.regTel="";
-          this.activeName="login"
+          this.regUser = "";
+          this.regTel = "";
+          this.activeName = "login";
         });
       } else {
         this.$alert("请填写用户名和密码", "提示");
       }
     },
     //登陆
-    login(){
+    login() {
       let params = {
-        username:this.loginUser,
-        password:this.loginPass,
-        rememberme:this.checked
+        username: this.loginUser,
+        password: this.loginPass,
+        rememberme: this.checked
       };
-      this.axios.post("/reg", params).then(res => {
-          if (res.status == 200) {
-            this.$message({
-              message: "登陆成功",
-              type: "success"
-            });
-          }
-          
-        });
+      this.axios.post("/login", params).then(res => {
+        if (res.status == 200) {
+          this.$message({
+            message: "登陆成功",
+            type: "success"
+          });
+          this.showLoginModal=false;
+          this.isLogin=true;
+        }
+      });
+    },
+    //退出登陆
+    quitLogin(){
+      this.axios.get('/layout').then(res=>{
+        if (res.status == 200) {
+          this.$message({
+            message: "退出成功",
+            type: "success"
+          });
+          this.isLogin = false;
+        }
+      })
     },
     //监听input选中
     inputFocus() {
@@ -397,5 +419,10 @@ export default {
       border-radius: 4px;
     }
   }
+}
+.Quit {
+  text-align: center;
+  color: $fontColor;
+  cursor: pointer;
 }
 </style>
