@@ -28,10 +28,8 @@ export default {
     this.axios
       .get("/index")
       .then(res => {
-        console.log(res);
         if (res.status == 200) {
           this.feedList = res.data;
-          console.log(this.feedList);
         }
       })
       .catch(err => {});

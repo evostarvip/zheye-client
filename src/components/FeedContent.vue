@@ -7,14 +7,13 @@
         <span class="ContentItem-more" @click="isRead = !isRead" v-if="isShow">阅读全文</span>
         <span class="iconfont icon-arrow-down" v-if="isShow"></span>
       </template>
-      <rich-content v-else @collapseText="isRead = !isRead"></rich-content>
+      <rich-content v-else @collapseText="isRead = !isRead" :content="content"></rich-content>
     </div>
   </div>
 </template>
 <script>
 import RichContent from "@/components/RichContent.vue";
 import FeedActions from "@/components/FeedActions.vue";
-('<p><span style="font-weight: b......');
 export default {
   name: "feed-content",
   components: {
@@ -23,7 +22,8 @@ export default {
   },
   props: {
     author: Object,
-    summary: String
+    summary: String,
+    content:Object
   },
   data() {
     return {

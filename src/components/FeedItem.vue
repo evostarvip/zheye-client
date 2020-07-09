@@ -3,7 +3,7 @@
 <template>
   <div class="TopstoryItem">
     <div class="ContentItem-title" @click="goToDetail(feedList.id)">{{feedList.title}}</div>
-    <feed-content v-if="feedList.answer" :author="feedList.answer" :summary="feedList.summary"></feed-content>
+    <feed-content v-if="feedList.answer" :author="feedList.answer" :summary="feedList.summary" :content="feedList.detail"></feed-content>
     <feed-actions @changeReview="isReview=!isReview" :actions="feedList.actions"></feed-actions>
   </div>
 </template>

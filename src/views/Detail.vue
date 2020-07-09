@@ -4,10 +4,10 @@
     <div class="QuestionHeader">
       <div class="QuestionHeader-content">
         <div class="QuestionHeader-main">
-          <div class="QuestionHeader-title">{{title}}</div>
+          <div class="QuestionHeader-title">{{msg.title}}</div>
           <div class="QuestionHeader-detail">
-            {{summary}}
-            <div class="QuestionHeader-more" @click="showMore" v-if="isShowMore">
+            {{msg.summary}}
+            <div class="QuestionHeader-more" @click="showMore" v-if="isShowMore&&msg.summary">
               <span>显示全部</span>
               <span class="iconfont icon-arrow-down"></span>
             </div>
@@ -31,7 +31,7 @@
         <div class="QuestionHeader-footer-inner">
           <div class="QuestionButton-groups">
             <button class="QuestionButton-follow">关注问题</button>
-            <button class="QuestionButton-ask" @click="isAsk=true">
+            <button class="QuestionButton-ask" @click="writeAnswer">
               <span class="iconfont icon-pen"></span>
               写回答
             </button>
@@ -60,22 +60,22 @@
     <div class="AnswerWrap" v-if="isAsk">
       <div class="AnswerHeader">
         <img
-          src="https://pic3.zhimg.com/71bd66aba6bf36075a6a3c9d383fe64d_s.jpg"
+          :src="user.headUrl"
           alt
           class="AuthorAvator"
         />
-        <span class="AuthorName">capricorn</span>
+        <span class="AuthorName">{{user.name}}</span>
       </div>
       <editor @change="contentChange" :isClear="isClear"></editor>
       <button class="AnswerButton" @click="submitAnswer">提交回答</button>
     </div>
 
     <!-- 回答 -->
-    <div class="QuestionMain"> 
+    <div class="QuestionMain">
       <div class="List">
-        <div class="ListHeader">174个回答</div>
-        <div class="ListItem" v-for="(item,index) in answerList" :key="index">
-          <rich-content :content="item" ></rich-content>
+        <div class="ListHeader">{{msg.reviewNum}}个回答</div>
+        <div class="ListItem" v-for="(item,index) in msg.answerList" :key="index">
+          <rich-content :content="item"></rich-content>
           <feed-actions :actions="item.actions"></feed-actions>
         </div>
       </div>
@@ -87,7 +87,8 @@
 import RichContent from "@/components/RichContent.vue";
 import FeedActions from "@/components/FeedActions.vue";
 import Editor from "@/components/Editor.vue";
-let detail,id;
+import util from "@/utils/index.js"
+let detail, id;
 export default {
   name: "detail",
   components: {
@@ -97,54 +98,67 @@ export default {
   },
   data() {
     return {
-      isShowMore:true,
-      title: "",
-      summary: "",
+      user:{},
+      msg:{},
+      isShowMore: true,
       isAsk: false,
-      tagList: ["计算机", "计算机专业", "编程"],
-      answerList: [],
-      eidtor:"",
-      isClear:false,
+      eidtor: "",
+      isClear: false
     };
   },
   mounted() {
     id = this.$route.params.id;
-    this.axios.get(`/question/detail?qid=${id}`).then(res => {
-      if (res.status == 200) {
-        this.answerList = res.data.answerList;
-        this.title=res.data.title;
-        this.summary=res.data.summary;
-        detail = res.data.detail;
-      }
-    });
+    this.getDetailMsg();
+    this.user = util.getUser()
   },
   methods: {
+    //获取数据
+    getDetailMsg() {
+      this.axios.get(`/question/detail?qid=${id}`).then(res => {
+        if (res.status == 200) {
+          this.msg=res.data
+          this.answerList = res.data.answerList;
+          this.title = res.data.title;
+          this.summary = res.data.summary;
+          this.answerNum = res.data.answerNum;
+          detail = res.data.detail;
+        }
+      });
+    },
     //监听编辑器
     contentChange(data) {
-      console.log(data)
-     this.eidtor=data;
+      console.log(data);
+      this.eidtor = data;
     },
     //显示更多
-    showMore(){
+    showMore() {
       this.summary = detail;
       this.isShowMore = false;
     },
+    //写回答
+    writeAnswer(){
+      if(util.isLogin()){
+        this.isAsk = true;
+      }else{
+         this.$alert('请先登录', '提示');
+      }
+    },
     //提交回答
-    submitAnswer(){
-      console.log(this.eidtor)
+    submitAnswer() {
       let params = {
-        content:this.eidtor,
-        qid:id
+        content: this.eidtor,
+        qid: id
       };
-      this.axios.post("/answer/add",params).then(res=>{
-        if(res.status == 200){
-           this.$message({
+      this.axios.post("/answer/add", params).then(res => {
+        if (res.status == 200) {
+          this.$message({
             message: "回答成功",
             type: "success"
           });
           this.isClear = true;
+          this.getDetailMsg();
         }
-      })
+      });
     }
   }
 };
@@ -282,6 +296,8 @@ export default {
     padding: 16px 0;
     .AuthorAvator {
       margin: 0 10px;
+      width: 30px;
+      height: 30px
     }
   }
   .AnswerButton {

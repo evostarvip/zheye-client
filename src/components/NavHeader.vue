@@ -5,7 +5,7 @@
       <!-- 导航栏 -->
       <ul class="AppHeader-tabs">
         <li class="Tabs-item">
-          <a href="#" class="Tabs-link isActive">首页</a>
+          <a href="/" class="Tabs-link isActive">首页</a>
         </li>
       </ul>
       <!-- 搜索框 -->
@@ -19,7 +19,7 @@
         />
         <span class="iconfont icon-icon161603" :class="{Icons:isFocus}"></span>
       </div>
-      <button class="AskButton" :class="{HideButton:isFocus}" @click="showModal=true">提问</button>
+      <button class="AskButton" :class="{HideButton:isFocus}" @click="showModal=true" v-show="isLogin">提问</button>
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
         <div class="AppHeader-profile">
@@ -28,7 +28,7 @@
             <div class="Quit" @click="quitLogin">退出登陆</div>
             <img
               slot="reference"
-              src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
+              :src="user.headUrl"
               class="AppHeader-profileAvatar"
             />
           </el-popover>
@@ -70,7 +70,7 @@
           <el-tabs v-model="activeName">
             <el-tab-pane label="立即注册" name="register">
               <div class="Sign-wrap">
-                <input class="SignInput" type="text" placeholder="手机号或者邮箱" v-model="regUser" />
+                <input class="SignInput" type="text" placeholder="用户名" v-model="regUser" />
               </div>
               <div class="Sign-wrap">
                 <input class="SignInput" type="password" placeholder="密码" v-model="regPass" />
@@ -80,7 +80,7 @@
             </el-tab-pane>
             <el-tab-pane label="密码登陆" name="login">
               <div class="Sign-wrap">
-                <input class="SignInput" type="text" placeholder="手机号或者邮箱" v-model="loginUser" />
+                <input class="SignInput" type="text" placeholder="用户名" v-model="loginUser" />
               </div>
               <div class="Sign-wrap">
                 <input class="SignInput" type="password" placeholder="密码" v-model="loginPass" />
@@ -98,6 +98,7 @@
 </template>
 <script>
 import Modal from "@/components/Modal.vue";
+import util from "@/utils/index.js"
 
 export default {
   name: "nav-header",
@@ -106,6 +107,7 @@ export default {
   },
   data() {
     return {
+      user:"",
       regUser: "", //注册手机号
       regPass: "", //注册密码
       loginUser: "", //登陆用户
@@ -117,19 +119,24 @@ export default {
       askTip: "",
       askTitle: "",//提问问题
       askDetail:"",//提问细节
-      isLogin: false,
+      isLogin: true,
       activeName: "login", //elmentui
       checked: false //elmentui
     };
   },
+  mounted(){
+    this.isLogin = util.isLogin();
+    this.user = util.getUser();
+  },
   methods: {
+  
     //注册
     register() {
       let params = {
         password: this.regPass,
         username: this.regUser
       };
-      if (this.regUser && this.regTel) {
+      if (this.regUser && this.regPass) {
         this.axios.post("/reg", params).then(res => {
           if (res.status == 200) {
             this.$message({
@@ -138,7 +145,7 @@ export default {
             });
           }
           this.regUser = "";
-          this.regTel = "";
+          this.regPass = "";
           this.activeName = "login";
         });
       } else {
@@ -158,6 +165,8 @@ export default {
             message: "登陆成功",
             type: "success"
           });
+          localStorage.setItem('user',JSON.stringify(res.data.user) );
+          this.user = res.data.user;
           this.showLoginModal=false;
           this.isLogin=true;
         }
@@ -205,6 +214,7 @@ export default {
             type: "success"
           });
            this.showModal = false;
+           this.$emit('addQues');
         }
       })
 
