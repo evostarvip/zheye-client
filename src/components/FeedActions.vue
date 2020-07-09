@@ -7,7 +7,7 @@
         class="Vote-desc"
       >{{ actions.isAgree ? `已赞同 ${actions.agreeNum}` : `赞同 ${actions.agreeNum}`}}</span>
     </div>
-    <div class="Vote-wrap" :class="{ChangeStatus:actions.isDisagree}" @click="changeDisagree">
+    <div class="Vote-wrap" :class="{ChangeStatus:actions.disagree}" @click="changeDisagree">
       <span class="icon-down-fill1-xs iconfont"></span>
     </div>
     <div class="Actions-wrap" @click="changeReview">
@@ -22,9 +22,9 @@
       <span class="iconfont icon-shoucang"></span>
       <span class="Actions-desc">收藏</span>
     </div>
-    <div class="Actions-wrap" @click="actions.isLike = !actions.isLike">
+    <div class="Actions-wrap" @click="actions.like = !actions.like">
       <span class="iconfont icon-xihuan"></span>
-      <span class="Actions-desc">{{actions.isLike?'取消喜欢':'喜欢'}}</span>
+      <span class="Actions-desc">{{actions.like?'取消喜欢':'喜欢'}}</span>
     </div>
     <div class="Actions-wrap">
       <span class="iconfont icon-shenglvehao"></span>
@@ -52,8 +52,8 @@ export default {
     changeAgree() {
       this.actions.isAgree = !this.actions.isAgree;
       if (this.actions.isAgree) {
-        if(this.actions.isDisagree){
-          this.actions.isDisagree=false;
+        if(this.actions.disagree){
+          this.actions.disagree=false;
         }
         this.actions.agreeNum++;
       } else {
@@ -61,14 +61,15 @@ export default {
       }
     },
     changeDisagree(){
-       this.actions.isDisagree = !this.actions.isDisagree;
-      if (this.actions.isDisagree &&this.actions.isAgree) {  
+       this.actions.disagree = !this.actions.disagree;
+      if (this.actions.disagree &&this.actions.isAgree) {  
           this.actions.isAgree=false;
           this.actions.agreeNum--;
       } 
     }
   }
 };
+
 </script>
 <style lang='scss' scoped>
 @import "../assets/css/config.scss";
