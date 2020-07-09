@@ -19,18 +19,18 @@
         />
         <span class="iconfont icon-icon161603" :class="{Icons:isFocus}"></span>
       </div>
-      <button class="AskButton" :class="{HideButton:isFocus}" @click="showModal=true" v-show="isLogin">提问</button>
+      <button
+        class="AskButton"
+        :class="{HideButton:isFocus}"
+        @click="showModal=true"
+        v-show="isLogin"
+      >提问</button>
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
         <div class="AppHeader-profile">
-
           <el-popover v-if="isLogin" placement="bottom" width="150" trigger="click">
             <div class="Quit" @click="quitLogin">退出登陆</div>
-            <img
-              slot="reference"
-              :src="user.headUrl"
-              class="AppHeader-profileAvatar"
-            />
+            <img slot="reference" :src="user.headUrl" class="AppHeader-profileAvatar" />
           </el-popover>
           <button v-else class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
         </div>
@@ -98,7 +98,7 @@
 </template>
 <script>
 import Modal from "@/components/Modal.vue";
-import util from "@/utils/index.js"
+import util from "@/utils/index.js";
 
 export default {
   name: "nav-header",
@@ -107,7 +107,7 @@ export default {
   },
   data() {
     return {
-      user:"",
+      user: "",
       regUser: "", //注册手机号
       regPass: "", //注册密码
       loginUser: "", //登陆用户
@@ -117,19 +117,18 @@ export default {
       showLoginModal: false,
       disabled: true,
       askTip: "",
-      askTitle: "",//提问问题
-      askDetail:"",//提问细节
+      askTitle: "", //提问问题
+      askDetail: "", //提问细节
       isLogin: true,
       activeName: "login", //elmentui
       checked: false //elmentui
     };
   },
-  mounted(){
+  mounted() {
     this.isLogin = util.isLogin();
     this.user = util.getUser();
   },
   methods: {
-  
     //注册
     register() {
       let params = {
@@ -165,16 +164,16 @@ export default {
             message: "登陆成功",
             type: "success"
           });
-          localStorage.setItem('user',JSON.stringify(res.data.user) );
+          localStorage.setItem("user", JSON.stringify(res.data.user));
           this.user = res.data.user;
-          this.showLoginModal=false;
-          this.isLogin=true;
+          this.showLoginModal = false;
+          this.isLogin = true;
         }
       });
     },
     //退出登陆
-    quitLogin(){
-      this.axios.get('/layout').then(res=>{
+    quitLogin() {
+      this.axios.get("/layout").then(res => {
         if (res.status == 200) {
           this.$message({
             message: "退出成功",
@@ -182,7 +181,7 @@ export default {
           });
           this.isLogin = false;
         }
-      })
+      });
     },
     //监听input选中
     inputFocus() {
@@ -204,20 +203,21 @@ export default {
     //发表问题
     publishQues() {
       let params = {
-        title:this.askTitle,
-        content:this.askDetail
-      }
-      this.axios.post('/question/add',params).then(res=>{
-        if(res.status == 200){
-           this.$message({
+        title: this.askTitle,
+        content: this.askDetail
+      };
+      this.axios.post("/question/add", params).then(res => {
+        if (res.status == 200) {
+          this.$message({
             message: "提问成功",
             type: "success"
           });
-           this.showModal = false;
-           this.$emit('addQues');
+          this.showModal = false;
+          this.askTitle = "";
+          this.askDetail = "";
+          this.$store.dispatch("setIsAdd", true);
         }
-      })
-
+      });
     }
   }
 };

@@ -9,7 +9,6 @@ import VueCookies from 'vue-cookie';
 import 'element-ui/lib/theme-chalk/index.css';
 
 axios.interceptors.response.use(function(response){
-  console.log(response)
   return response
 },(error)=>{
   let res = error.response;
