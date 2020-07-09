@@ -71,6 +71,7 @@
       <div class="List">
         <div class="ListHeader">{{msg.answerNum}}个回答</div>
         <div class="ListItem" v-for="(item,index) in msg.answerList" :key="index">
+          
           <rich-content :content="item"></rich-content>
           <feed-actions :actions="item.actions"></feed-actions>
         </div>
