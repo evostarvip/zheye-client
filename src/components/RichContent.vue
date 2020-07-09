@@ -1,7 +1,7 @@
 <template>
   <div class="RichContent">
     <div class="AuthorInfo">
-      <img src="https://pic3.zhimg.com/71bd66aba6bf36075a6a3c9d383fe64d_s.jpg" class="AuthorAvatar" />
+      <img :src="content.answer.headUrl"  class="AuthorAvatar"/>
       <span class="AuthorName">{{content.answer.name}}</span>
     </div>
     <div class="RichContent-votes">{{content.actions.agreeNum}}人赞同了该回答</div>
