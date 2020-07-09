@@ -71,9 +71,7 @@
       <div class="List">
         <div class="ListHeader">{{msg.answerNum}}个回答</div>
         <div class="ListItem" v-for="(item,index) in msg.answerList" :key="index">
-          
-          <rich-content :content="item"></rich-content>
-          <feed-actions :actions="item.actions"></feed-actions>
+          <question-list :answerList="item"></question-list>
         </div>
       </div>
     </div>
@@ -83,8 +81,6 @@
 <script>
 import QuestionList from "@/components/QuestionList.vue";
 import Editor from "@/components/Editor.vue";
-import FeedActions from "@/components/FeedActions.vue";
-import RichContent from "@/components/RichContent.vue";
 import util from "@/utils/index.js";
 let detail, id;
 export default {
@@ -92,8 +88,6 @@ export default {
   components: {
     Editor,
     QuestionList,
-    FeedActions,
-    RichContent
   },
   data() {
     return {

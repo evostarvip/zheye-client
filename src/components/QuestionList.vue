@@ -1,7 +1,11 @@
 <!-- 详情页回答列表 -->
 <template>
   <div class="ListItem">
-    <rich-content></rich-content>
+    <rich-content
+      :content="answerList.detail"
+      :author="answerList.answer"
+      :summary="answerList.summary"
+    ></rich-content>
     <feed-actions @changeReview="isReview=!isReview" :actions="answerList.actions"></feed-actions>
     <transition name="fade">
       <comment v-if="isReview"></comment>
