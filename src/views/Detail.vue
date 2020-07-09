@@ -22,7 +22,7 @@
           <div class="QuestionStatus-split"></div>
           <div class="QuestionStatus-item">
             <div class="QuestionStatus-name">被浏览</div>
-            <div class="QuestionStatus-num">453,716</div>
+            <div class="QuestionStatus-num">{{msg.lookNum}}</div>
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@
     <!-- 回答 -->
     <div class="QuestionMain">
       <div class="List">
-        <div class="ListHeader">{{msg.reviewNum}}个回答</div>
+        <div class="ListHeader">{{msg.answerNum}}个回答</div>
         <div class="ListItem" v-for="(item,index) in msg.answerList" :key="index">
           <rich-content :content="item"></rich-content>
           <feed-actions :actions="item.actions"></feed-actions>
