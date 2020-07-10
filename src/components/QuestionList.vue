@@ -2,9 +2,7 @@
 <template>
   <div class="ListItem">
     <rich-content
-      :content="answerList.detail"
-      :author="answerList.answer"
-      :summary="answerList.summary"
+      :content="answerList"
     ></rich-content>
     <feed-actions @changeReview="isReview=!isReview" :actions="answerList.actions"></feed-actions>
     <transition name="fade">
@@ -31,6 +29,9 @@ export default {
     return {
       isReview: false
     };
+  },
+  mounted(){
+    console.log(this.answerList)
   },
   methods: {
     changeReview() {

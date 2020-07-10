@@ -232,6 +232,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
+  z-index:1000;
   background: #fff;
   box-shadow: 0 1px 3px rgba(26, 26, 26, 0.1);
   &-inner {
