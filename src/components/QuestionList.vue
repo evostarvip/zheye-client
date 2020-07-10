@@ -1,7 +1,9 @@
 <!-- 详情页回答列表 -->
 <template>
   <div class="ListItem">
-    <rich-content></rich-content>
+    <rich-content
+      :content="answerList"
+    ></rich-content>
     <feed-actions @changeReview="isReview=!isReview" :actions="answerList.actions"></feed-actions>
     <transition name="fade">
       <comment v-if="isReview"></comment>
@@ -27,6 +29,9 @@ export default {
     return {
       isReview: false
     };
+  },
+  mounted(){
+    console.log(this.answerList)
   },
   methods: {
     changeReview() {

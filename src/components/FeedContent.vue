@@ -3,22 +3,18 @@
   <div class="RichContent-wrapper">
     <div class="RichContent-inner">
       <template v-if="!isRead">
-        <b>{{author}}:</b>
+        <b>{{author.name}}</b>
         {{summary}}
-        <span 
-          class="ContentItem-more"
-          @click="isRead = !isRead"
-        >阅读全文</span>
-        <span class="iconfont icon-arrow-down"></span>
+        <span class="ContentItem-more" @click="isRead = !isRead" v-if="isShow">阅读全文</span>
+        <span class="iconfont icon-arrow-down" v-if="isShow"></span>
       </template>
-      <rich-content v-else @collapseText="isRead = !isRead"></rich-content>
-  
-      
+      <rich-content v-else @collapseText="isRead = !isRead" :content="content"></rich-content>
     </div>
   </div>
 </template>
 <script>
 import RichContent from "@/components/RichContent.vue";
+import FeedActions from "@/components/FeedActions.vue";
 export default {
   name: "feed-content",
   components: {
@@ -28,10 +24,22 @@ export default {
     author:String,
     summary:String
   },
+  props: {
+    author: Object,
+    summary: String,
+    content:Object
+  },
   data() {
     return {
-      isRead: false
+      isRead: false,
+      isShow:true
     };
+  },
+  mounted(){
+    console.log(this.content)
+    if(this.summary.length<36){
+      this.isShow=false;
+    }
   }
 };
 </script>

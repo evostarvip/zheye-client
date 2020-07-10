@@ -4,10 +4,10 @@
     <div class="QuestionHeader">
       <div class="QuestionHeader-content">
         <div class="QuestionHeader-main">
-          <div class="QuestionHeader-title">学计算机很痛苦还要不要学下去</div>
+          <div class="QuestionHeader-title">{{msg.title}}</div>
           <div class="QuestionHeader-detail">
-            我是一个大一学生，计算机专业。开学时进了学校的一个科技社团，主要学习前端方面的内容。刚开始学习时觉得不太难，也写了很多代码来练习，但后来越学越吃力，感觉很多不会，很多不懂，但却不知道从哪里入手来学，学得也是糟糕透了……
-            <div class="QuestionHeader-more">
+            {{msg.summary}}
+            <div class="QuestionHeader-more" @click="showMore" v-if="isShowMore&&msg.summary">
               <span>显示全部</span>
               <span class="iconfont icon-arrow-down"></span>
             </div>
@@ -22,7 +22,7 @@
           <div class="QuestionStatus-split"></div>
           <div class="QuestionStatus-item">
             <div class="QuestionStatus-name">被浏览</div>
-            <div class="QuestionStatus-num">453,716</div>
+            <div class="QuestionStatus-num">{{msg.lookNum}}</div>
           </div>
         </div>
       </div>
@@ -31,7 +31,7 @@
         <div class="QuestionHeader-footer-inner">
           <div class="QuestionButton-groups">
             <button class="QuestionButton-follow">关注问题</button>
-            <button class="QuestionButton-ask" @click="isAsk=true">
+            <button class="QuestionButton-ask" @click="writeAnswer">
               <span class="iconfont icon-pen"></span>
               写回答
             </button>
@@ -59,23 +59,19 @@
     <!-- 编辑器 -->
     <div class="AnswerWrap" v-if="isAsk">
       <div class="AnswerHeader">
-        <img
-          src="https://pic3.zhimg.com/71bd66aba6bf36075a6a3c9d383fe64d_s.jpg"
-          alt
-          class="AuthorAvator"
-        />
-        <span class="AuthorName">capricorn</span>
+        <img :src="user.headUrl" alt class="AuthorAvator" />
+        <span class="AuthorName">{{user.name}}</span>
       </div>
-      <editor @change="contentChange"></editor>
-      <button class="AnswerButton">提交回答</button>
+      <editor @change="contentChange" :isClear="isClear"></editor>
+      <button class="AnswerButton" @click="submitAnswer">提交回答</button>
     </div>
 
     <!-- 回答 -->
     <div class="QuestionMain">
       <div class="List">
-        <div class="ListHeader">174个回答</div>
-        <div v-for="(item,index) in answerList" :key="index">
-          <question-list :answerList="item" ></question-list>
+        <div class="ListHeader">{{msg.answerNum}}个回答</div>
+        <div class="ListItem" v-for="(item,index) in msg.answerList" :key="index">
+          <question-list :answerList="item"></question-list>
         </div>
       </div>
     </div>
@@ -85,43 +81,77 @@
 <script>
 import QuestionList from "@/components/QuestionList.vue";
 import Editor from "@/components/Editor.vue";
-
+import util from "@/utils/index.js";
+let detail, id;
 export default {
   name: "detail",
   components: {
     Editor,
-    QuestionList
+    QuestionList,
   },
   data() {
     return {
+      user: {},
+      msg: {},
+      isShowMore: true,
       isAsk: false,
-      title:'学计算机很痛苦',
-      summary:"我是一个大一学生，计算机专业。开学时进了学校的一个科技社团，主要学习前端方面的内容。刚开始学习时觉得不太难，也写了很多代码来练习，但后来越学越吃力，感觉很多不会，很多不懂，但却不知道从哪里入手来学，学得也是糟糕透了…… ",
-      detail:"我是一个大一学生，计算机专业。开学时进了学校--详细描述",
-      answerList: [
-        {
-          author: "小螺号",
-          AgreeNum: 400,
-          avaUrl: "",
-          content:
-            "我在悉尼认识不少中国人，之前的专业五花八门，艺术/会计/英语/建筑都有，都转计算机了。也看不出有什么编程天赋，就是凑或着过的样子。转行的原因就是搞计算机钱多，工作轻松。放弃原来的专业痛苦吗？当他们发现专业对口的工作机会少钱少加班多后，就领悟到编程一点都不痛苦了。你现在觉得编程痛苦，是因为还是青少年，荷尔蒙过多，容易多愁善感。把小问题无限放大。上文提到的人都有一定工作经验，被社会大学教育过，考虑问题比较实际。编程就是一门手艺而已。有的人干得快一点，有的人干得慢一点。反正只要你高中毕业，基本的逻辑思维有，就能靠这个挣钱。我在澳洲看了很多本地所谓专业程序员，总是把布尔表达式搞反，这样的人连高中水准也没有，照样混得不错。",
-          data: "06-06",
-          actions: {
-            reviewNum: 20,
-            isAgree: false,
-            agreeNum: 20,
-            isDisagree: true,
-            isLike: false,
-            isCollect: false
-          }
-        }
-      ]
+      eidtor: "",
+      isClear: false
     };
   },
+  mounted() {
+    id = this.$route.params.id;
+    this.getDetailMsg();
+    this.user = util.getUser();
+  },
   methods: {
+    //获取数据
+    getDetailMsg() {
+      this.axios.get(`/question/detail?qid=${id}`).then(res => {
+        if (res.status == 200) {
+          this.msg = res.data;
+          this.answerList = res.data.answerList;
+          this.title = res.data.title;
+          this.summary = res.data.summary;
+          this.answerNum = res.data.answerNum;
+          detail = res.data.detail;
+        }
+      });
+    },
     //监听编辑器
     contentChange(data) {
       console.log(data);
+      this.eidtor = data;
+    },
+    //显示更多
+    showMore() {
+      this.summary = detail;
+      this.isShowMore = false;
+    },
+    //写回答
+    writeAnswer() {
+      if (util.isLogin()) {
+        this.isAsk = true;
+      } else {
+        this.$alert("请先登录", "提示");
+      }
+    },
+    //提交回答
+    submitAnswer() {
+      let params = {
+        content: this.eidtor,
+        qid: id
+      };
+      this.axios.post("/answer/add", params).then(res => {
+        if (res.status == 200) {
+          this.$message({
+            message: "回答成功",
+            type: "success"
+          });
+          this.isClear = true;
+          this.getDetailMsg();
+        }
+      });
     }
   }
 };
@@ -259,6 +289,8 @@ export default {
     padding: 16px 0;
     .AuthorAvator {
       margin: 0 10px;
+      width: 30px;
+      height: 30px;
     }
   }
   .AnswerButton {

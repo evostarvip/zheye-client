@@ -6,7 +6,7 @@
       <!-- 导航栏 -->
       <ul class="AppHeader-tabs">
         <li class="Tabs-item">
-          <a href="#" class="Tabs-link isActive">首页</a>
+          <a href="/" class="Tabs-link isActive">首页</a>
         </li>
       </ul>
       <!-- 搜索框 -->
@@ -20,7 +20,12 @@
         />
         <span class="iconfont icon-icon161603" :class="{Icons:isFocus}"></span>
       </div>
-      <button class="AskButton" :class="{HideButton:isFocus}" @click="showModal=true">提问</button>
+      <button
+        class="AskButton"
+        :class="{HideButton:isFocus}"
+        @click="showModal=true"
+        v-show="isLogin"
+      >提问</button>
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
         <div v-if="isLogin" class="AppHeader-profile">
@@ -33,8 +38,13 @@
             src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
             class="AppHeader-profileAvatar"
           />
+        <div class="AppHeader-profile">
+          <el-popover v-if="isLogin" placement="bottom" width="150" trigger="click">
+            <div class="Quit" @click="quitLogin">退出登陆</div>
+            <img slot="reference" :src="user.headUrl" class="AppHeader-profileAvatar" />
+          </el-popover>
+          <button v-else class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
         </div>
-        <button v-else class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
       </div>
     </div>
     <!-- 提问遮罩层 -->
@@ -58,7 +68,7 @@
               <div class="AskFieldTip">{{askTip}}</div>
             </div>
           </div>
-          <textarea class="AskDetial" placeholder="输入问题背景、条件等详细信息（选填）"></textarea>
+          <textarea class="AskDetial" placeholder="输入问题背景、条件等详细信息（选填）" v-model="askDetail"></textarea>
           <!-- 发布问题 -->
           <button class="AskButton" :disabled="disabled" @click="publishQues">发布问题</button>
         </div>
@@ -71,25 +81,25 @@
           <el-tabs v-model="activeName">
             <el-tab-pane label="立即注册" name="register">
               <div class="Sign-wrap">
-                <input class="SignInput" type="text" placeholder="手机号或者邮箱" />
+                <input class="SignInput" type="text" placeholder="用户名" v-model="regUser" />
               </div>
               <div class="Sign-wrap">
-                <input class="SignInput" type="password" placeholder="密码" />
+                <input class="SignInput" type="password" placeholder="密码" v-model="regPass" />
               </div>
               <div class="RemeberMe"></div>
-              <button class="SubmitButton">注册</button>
+              <button class="SubmitButton" @click="register">注册</button>
             </el-tab-pane>
             <el-tab-pane label="密码登陆" name="login">
               <div class="Sign-wrap">
-                <input class="SignInput" type="text" placeholder="手机号或者邮箱" />
+                <input class="SignInput" type="text" placeholder="用户名" v-model="loginUser" />
               </div>
               <div class="Sign-wrap">
-                <input class="SignInput" type="password" placeholder="密码" />
+                <input class="SignInput" type="password" placeholder="密码" v-model="loginPass" />
               </div>
               <div class="RemeberMe">
                 <el-checkbox v-model="checked">7天内免登录</el-checkbox>
               </div>
-              <button class="SubmitButton">登陆</button>
+              <button class="SubmitButton" @click="login">登陆</button>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -100,6 +110,7 @@
 <script>
 import Modal from "@/components/Modal.vue";
 import PoverContent from "@/components/PoverContent.vue";
+import util from "@/utils/index.js";
 
 export default {
   name: "nav-header",
@@ -109,18 +120,82 @@ export default {
   },
   data() {
     return {
+      user: "",
+      regUser: "", //注册手机号
+      regPass: "", //注册密码
+      loginUser: "", //登陆用户
+      loginPass: "", //注册密码
       isFocus: false,
       showModal: false,
       showLoginModal: false,
       disabled: true,
       askTip: "",
-      askTitle: "",
+      askTitle: "", //提问问题
+      askDetail: "", //提问细节
       isLogin: true,
       activeName: "login", //elmentui
       checked: false //elmentui
     };
   },
+  mounted() {
+    this.isLogin = util.isLogin();
+    this.user = util.getUser();
+  },
   methods: {
+    //注册
+    register() {
+      let params = {
+        password: this.regPass,
+        username: this.regUser
+      };
+      if (this.regUser && this.regPass) {
+        this.axios.post("/reg", params).then(res => {
+          if (res.status == 200) {
+            this.$message({
+              message: "恭喜你，注册成功，赶紧登陆吧",
+              type: "success"
+            });
+          }
+          this.regUser = "";
+          this.regPass = "";
+          this.activeName = "login";
+        });
+      } else {
+        this.$alert("请填写用户名和密码", "提示");
+      }
+    },
+    //登陆
+    login() {
+      let params = {
+        username: this.loginUser,
+        password: this.loginPass,
+        rememberme: this.checked
+      };
+      this.axios.post("/login", params).then(res => {
+        if (res.status == 200) {
+          this.$message({
+            message: "登陆成功",
+            type: "success"
+          });
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+          this.user = res.data.user;
+          this.showLoginModal = false;
+          this.isLogin = true;
+        }
+      });
+    },
+    //退出登陆
+    quitLogin() {
+      this.axios.get("/layout").then(res => {
+        if (res.status == 200) {
+          this.$message({
+            message: "退出成功",
+            type: "success"
+          });
+          this.isLogin = false;
+        }
+      });
+    },
     //监听input选中
     inputFocus() {
       this.isFocus = true;
@@ -140,8 +215,22 @@ export default {
     },
     //发表问题
     publishQues() {
-      console.log("发表问题");
-      this.showModal = false;
+      let params = {
+        title: this.askTitle,
+        content: this.askDetail
+      };
+      this.axios.post("/question/add", params).then(res => {
+        if (res.status == 200) {
+          this.$message({
+            message: "提问成功",
+            type: "success"
+          });
+          this.showModal = false;
+          this.askTitle = "";
+          this.askDetail = "";
+          this.$store.dispatch("setIsAdd", true);
+        }
+      });
     }
   }
 };
@@ -154,6 +243,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
+  z-index:1000;
   background: #fff;
   box-shadow: 0 1px 3px rgba(26, 26, 26, 0.1);
   &-inner {
@@ -375,5 +465,10 @@ export default {
       border-radius: 4px;
     }
   }
+}
+.Quit {
+  text-align: center;
+  color: $fontColor;
+  cursor: pointer;
 }
 </style>
