@@ -26,7 +26,7 @@
         <div v-if="isLogin" class="AppHeader-profile">
           <div class="AppHeader-msg">
             <span class="iconfont icon-weibiaoti-_fuzhi"></span>
-            <!-- <pover-content></pover-content> -->
+            <pover-content></pover-content>
           </div>
 
           <img
@@ -99,6 +99,7 @@
 </template>
 <script>
 import Modal from "@/components/Modal.vue";
+import PoverContent from "@/components/PoverContent.vue";
 
 export default {
   name: "nav-header",
