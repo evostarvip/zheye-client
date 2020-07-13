@@ -29,10 +29,10 @@
       <div class="AppHeader-userInfo">
         <div class="AppHeader-profile">
           <el-popover v-if="isLogin" placement="bottom" width="150" trigger="click">
-            <div class="Quit" @click="quitLogin">退出登陆</div>
+            <div class="Quit" @click="quitLogin">退出登录</div>
             <img slot="reference" :src="user.headUrl" class="AppHeader-profileAvatar" />
           </el-popover>
-          <button v-else class="LoginButton" @click="showLoginModal=true">登陆 / 注册</button>
+          <button v-else class="LoginButton" @click="showLoginModal=true">登录 / 注册</button>
         </div>
       </div>
     </div>
@@ -63,7 +63,7 @@
         </div>
       </template>
     </modal>
-    <!-- 登陆遮罩层 -->
+    <!-- 登录遮罩层 -->
     <modal :showModal="showLoginModal" @cancel="showLoginModal = false">
       <template v-slot:dialog>
         <div class="Login-wrap">
@@ -110,7 +110,7 @@ export default {
       user: "",
       regUser: "", //注册手机号
       regPass: "", //注册密码
-      loginUser: "", //登陆用户
+      loginUser: "", //登录用户
       loginPass: "", //注册密码
       isFocus: false,
       showModal: false,
@@ -151,7 +151,7 @@ export default {
         this.$alert("请填写用户名和密码", "提示");
       }
     },
-    //登陆
+    //登录
     login() {
       let params = {
         username: this.loginUser,
@@ -161,7 +161,7 @@ export default {
       this.axios.post("/login", params).then(res => {
         if (res.status == 200) {
           this.$message({
-            message: "登陆成功",
+            message: "登录成功",
             type: "success"
           });
           localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -388,7 +388,7 @@ export default {
       }
     }
   }
-  // 登陆
+  // 登录
   .Login-wrap {
     width: 400px;
     padding: 0 24px 30px;
