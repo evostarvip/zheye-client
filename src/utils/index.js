@@ -1,6 +1,6 @@
 import VueCookies from 'vue-cookie';
 
-// 是否登陆过期
+// 是否登录过期
  function isLogin() {
    if(VueCookies.get('token')){
        return true
