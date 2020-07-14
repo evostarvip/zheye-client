@@ -148,7 +148,6 @@ export default {
     },
     //发送信息
     send() {
-      //   let user = JSON.parse(localStorage.getItem("user"));
       let toId;
       if (this.uid == 14) {
         toId = 1;
