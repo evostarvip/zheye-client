@@ -4,7 +4,7 @@
       <div class="ContactSide">
         <div class="ContactSide-tip">联系人</div>
         <div v-for="(item,index) in userList" :key="index">
-          <div class="ContactItem">
+          <div class="ContactItem" @click="chooseUser(item)" :class="{ChooseItem : item.uid == chooseId}">
             <img class="UserAvator" :src="item.avaUrl" alt="头像" />
             <div class="UserContent">
               <div class="UserMsg">
@@ -18,7 +18,7 @@
       </div>
       <div class="ContactBox">
         <div class="ContactBox-header">再见</div>
-        <div class="MessageBox">
+        <div class="MessageBox" ref="MessageBox">
           <div
             v-for="(item,index) in chatList"
             :key="index"
@@ -35,10 +35,10 @@
         </div>
         <!-- 输入框 -->
         <div class="InputBox">
-          <textarea v-model="msg" class="InputTextarea" rows="3"></textarea>
+          <textarea v-model="msg" class="InputTextarea" rows="3" @keyup.enter="send"></textarea>
           <div class="InputBox-footer">
             <div class="FooterDesc">按Enter键发送</div>
-            <button class="sendButton" :disabled="disabled" @click="send">发送</button>
+            <button class="sendButton"  @click="send">发送</button>
           </div>
         </div>
       </div>
@@ -78,6 +78,7 @@ export default {
       ], //聊天记录
       userList: [
         {
+          uid:1,
           username: "再见",
           content: "做好自己",
           time: "6-22",
@@ -85,6 +86,7 @@ export default {
             "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
         },
         {
+             uid:2,
           username: "再见",
           content: "做好自己",
           time: "6-22",
@@ -92,6 +94,7 @@ export default {
             "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
         },
         {
+             uid:3,
           username: "再见",
           content: "做好自己",
           time: "6-22",
@@ -99,6 +102,7 @@ export default {
             "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
         },
         {
+             uid:4,
           username: "再见",
           content: "做好自己",
           time: "6-22",
@@ -106,7 +110,7 @@ export default {
             "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
         }
       ],
-      disabled:false
+      chooseId:0
     };
   },
   mounted() {
@@ -122,10 +126,10 @@ export default {
         that.ws = ws;
         ws.onopen = function(e) {
           console.log("连接服务器成功");
-          let msg={
-              type:1,
-              uid:that.uid
-          }
+          let msg = {
+            type: 1,
+            uid: that.uid
+          };
           ws.send(JSON.stringify(msg));
         };
         ws.onclose = function(e) {
@@ -144,7 +148,7 @@ export default {
     },
     //发送信息
     send() {
-    //   let user = JSON.parse(localStorage.getItem("user"));
+      //   let user = JSON.parse(localStorage.getItem("user"));
       let toId;
       if (this.uid == 14) {
         toId = 1;
@@ -155,11 +159,23 @@ export default {
         id: this.uid,
         bridge: [this.uid, toId],
         content: this.msg,
-         avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
+        avaUrl:
+          "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
       };
       this.ws.send(JSON.stringify(msg));
       this.msg = "";
+      setTimeout(() => {
+        this.scrollBottm();
+      }, 200);
+    },
+    //滚动条滚动到底部
+    scrollBottm() {
+      let el = this.$refs["MessageBox"];
+      el.scrollTop = el.scrollHeight;
+    },
+    //选择联系人
+    chooseUser(user){
+        this.chooseId = user.uid;
     }
   }
 };
@@ -174,6 +190,7 @@ export default {
   border-radius: 3px;
   margin: 8px auto 0;
   display: flex;
+  //联系人
   .ContactSide {
     width: 286px;
     height: 100%;
@@ -210,9 +227,14 @@ export default {
       }
     }
   }
+  .ChooseItem{
+    background: #f5f4f4;
+ }
   .UserAvator {
     width: 40px;
     height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
   }
   .ContactBox {
     width: 710px;
@@ -229,6 +251,7 @@ export default {
     //聊天框
     .MessageBox {
       height: 362px;
+      overflow: scroll;
       .Message {
         display: flex;
         margin: 20px;
@@ -283,12 +306,14 @@ export default {
       flex-direction: column;
       justify-content: space-between;
       height: 170px;
+      background: #fff;
+      z-index: 10;
       .InputTextarea {
         margin-top: 20px;
         width: 100%;
-        border:none;
+        border: none;
         font-size: 14px;
-        flex:1
+        flex: 1;
       }
       &-footer {
         display: flex;
@@ -314,4 +339,5 @@ export default {
     }
   }
 }
+
 </style>
