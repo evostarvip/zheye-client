@@ -126,14 +126,12 @@
 </template>
 <script>
 import Modal from "@/components/Modal.vue";
-import PoverContent from "@/components/PoverContent.vue";
 import util from "@/utils/index.js";
 
 export default {
   name: "nav-header",
   components: {
     Modal,
-    PoverContent
   },
   data() {
     return {
@@ -245,7 +243,7 @@ export default {
         }
       });
     },
-    //退出登陆
+    //退出登录
     quitLogin() {
       this.axios.get("/layout").then(res => {
         if (res.status == 200) {
