@@ -6,10 +6,45 @@
     <div class="CommentItem" v-for="(item,index) in commentList" :key="index">
       <!-- 评论头 -->
       <div class="CommentItem-meta">
-        <img
-          src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
-          class="CommentItem-avatar"
-        />
+        <el-popover placement="bottom-start" visible-arrow="false" width="365" trigger="hover">
+          <div class="UserCard-wrap">
+            <div class="UserMessage">
+              <div class="UserAvatar-wrap">
+                <img
+                  src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
+                  class="UserAvatar"
+                />
+              </div>
+              <span class="UserName">你猜猜</span>
+            </div>
+            <div class="UserContent">
+              <div class="UserContent-detail">
+                <div class="UserContent-title">回答</div>
+                <div class="UserContent-num">0</div>
+              </div>
+              <div class="UserContent-detail">
+                <div class="UserContent-title">关注者</div>
+                <div class="UserContent-num">0</div>
+              </div>
+            </div>
+            <div class="UserButton">
+              <div class="AttentionBtn">
+                <span class="iconfont icon-jia"></span>
+                <span>关注</span>
+              </div>
+              <div class="ChatBtn">
+                <span class="iconfont icon-xiaoxi"></span>
+                <span>发私信</span>
+              </div>
+            </div>
+          </div>
+          <img
+            slot="reference"
+            src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
+            class="CommentItem-avatar"
+          />
+        </el-popover>
+
         <span class="CommentItem-name">{{item.name}}</span>
         <span class="CommentItem-time">{{item.time}}</span>
       </div>
@@ -91,7 +126,7 @@ export default {
               responded: "被回复的人",
               time: "04-11",
               commentMsg: {
-              name: "回复的人",
+                name: "回复的人",
 
                 content: "你管我说什么玩意",
                 likeNum: "0",
@@ -117,7 +152,7 @@ export default {
               responded: "被回复的人",
               time: "04-11",
               commentMsg: {
-              name: "回复的人",
+                name: "回复的人",
 
                 content:
                   "你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意",
@@ -210,6 +245,76 @@ export default {
       margin-left: 20px;
       color: #ffffff;
       background: $mainColor;
+    }
+  }
+}
+//用户卡片
+.UserCard-wrap {
+  background-color: #fff;
+  padding: 0 10px;
+  position: relative;
+  .UserMessage {
+    display: flex;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #ebebeb;
+  }
+  .UserAvatar-wrap {
+    width: 60px;
+    height: 40px; //只是为了撑起一定高度，不一定要跟图片一样高
+    margin-right: 20px;
+  }
+  .UserAvatar {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    top: -30px;
+  }
+  .UserContent {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .UserContent-detail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-weight: 600;
+      .UserContent-title {
+        font-size: 14px;
+        color: $fontColor;
+      }
+      .UserContent-num {
+        font-size: 16px;
+      }
+    }
+  }
+  .UserButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 15px;
+    margin-top: 10px;
+    .AttentionBtn {
+      background-color: $mainColor;
+      color: #fff;
+      width: 140px;
+      height: 36px;
+      line-height: 36px;
+      text-align: center;
+      border-radius: 6px;
+      border: 1px solid $mainColor;
+      cursor: pointer;
+    }
+    .ChatBtn {
+      color: $fontColor;
+      width: 140px;
+      height: 36px;
+      line-height: 36px;
+      text-align: center;
+      border-radius: 6px;
+      border: 1px solid $fontColor;
+      cursor: pointer;
     }
   }
 }
