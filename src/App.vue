@@ -7,4 +7,8 @@
 <style  lang="scss">
 @import "./assets/css/reset.scss";
 @import "./assets/css/index.scss";
+#app{
+  width: 100%;
+  height: 100%;
+}
 </style>

@@ -1,7 +1,7 @@
   <!-- 赞同评论等图标 -->
 <template>
   <div class="ContentItem-actions">
-    <div class="Vote-wrap" :class="{ChangeStatus:actions.isAgree}"  @click="changeAgree">
+    <div class="Vote-wrap" :class="{ChangeStatus:actions.isAgree}" @click="changeAgree">
       <span class="icon-down-fill-xs iconfont"></span>
       <span
         class="Vote-desc"
@@ -35,7 +35,8 @@
 export default {
   name: "feed-action",
   props: {
-    actions: Object
+    actions: Object,
+    id: Number
   },
   data() {
     return {
@@ -50,26 +51,34 @@ export default {
     },
     //改变赞同状态
     changeAgree() {
-      this.actions.isAgree = !this.actions.isAgree;
-      if (this.actions.isAgree) {
-        if(this.actions.disagree){
-          this.actions.disagree=false;
+      // 点赞
+      this.axios.get(`/support?type=1&id=${this.id}`).then(res => {
+        if (res.status == 200) {
+          this.actions.isAgree = !this.actions.isAgree;
+          if (this.actions.isAgree) {
+            if (this.actions.disagree) {
+              this.actions.disagree = false;
+            }
+            this.actions.agreeNum++;
+          } else {
+            this.actions.agreeNum--;
+          }
         }
-        this.actions.agreeNum++;
-      } else {
-        this.actions.agreeNum--;
-      }
+      });
     },
-    changeDisagree(){
-       this.actions.disagree = !this.actions.disagree;
-      if (this.actions.disagree &&this.actions.isAgree) {  
-          this.actions.isAgree=false;
-          this.actions.agreeNum--;
-      } 
+    changeDisagree() {
+      this.axios.get(`/unsupport?type=1&id=${this.id}`).then(res => {
+        if (res.status == 200) {
+          this.actions.disagree = !this.actions.disagree;
+          if (this.actions.disagree && this.actions.isAgree) {
+            this.actions.isAgree = false;
+            this.actions.agreeNum--;
+          }
+        }
+      });
     }
   }
 };
-
 </script>
 <style lang='scss' scoped>
 @import "../assets/css/config.scss";
