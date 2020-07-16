@@ -36,7 +36,6 @@ export default {
     };
   },
   mounted(){
-    console.log(this.content)
     if(this.summary.length<36){
       this.isShow=false;
     }

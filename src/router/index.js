@@ -20,6 +20,11 @@ Vue.use(VueRouter)
         path: '/detail/:id', 
         name: 'detail',
         component: () => import('../views/Detail.vue')
+      },
+      {
+        path: '/contact', 
+        name: 'contact',
+        component: () => import('../views/Contact.vue')
       }
     ]
   }

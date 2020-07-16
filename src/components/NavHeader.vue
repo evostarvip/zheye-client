@@ -28,6 +28,33 @@
       >提问</button>
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
+        <div class="AppHeader-msg">
+          <el-popover
+            v-if="isLogin"
+            placement="bottom"
+            width="360"
+            trigger="click"
+            popper-class="PriviteMessage-wrap"
+          >
+            <div class="PriviteMessage">
+              <div class="MessageTab">我的私信</div>
+              <div v-for="(item,index) in priviteMsg" :key="index">
+                <div class="MessageItem">
+                  <img :src="item.avaUrl" alt class="Avatar" />
+                  <div class="MessageUsers">
+                    <div class="MessageUsers-name">{{item.username}}</div>
+                    <div class="MessageUsers-content">{{item.content}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="MessageFooter">查看全部私信</div>
+            </div>
+
+            <span slot="reference" class="iconfont icon-weibiaoti-_fuzhi"></span>
+          </el-popover>
+
+          <!-- <pover-content></pover-content> -->
+        </div>
         <div class="AppHeader-profile">
           <el-popover v-if="isLogin" placement="bottom" width="150" trigger="click">
             <div class="Quit" @click="quitLogin">退出登录</div>
@@ -105,7 +132,6 @@ export default {
   name: "nav-header",
   components: {
     Modal,
-    // PoverContent
   },
   data() {
     return {
@@ -123,7 +149,51 @@ export default {
       askDetail: "", //提问细节
       isLogin: true,
       activeName: "login", //elmentui
-      checked: false //elmentui
+      checked: false, //elmentui
+      priviteMsg: [
+        {
+          username: "滚滚",
+          content: "谢谢",
+          avaUrl:
+            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
+        },
+        {
+          username: "球球",
+          content: "再见",
+          avaUrl:
+            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
+        },
+        {
+          username: "球球",
+          content: "再见",
+          avaUrl:
+            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
+        },
+        {
+          username: "球球",
+          content: "再见",
+          avaUrl:
+            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
+        },
+        {
+          username: "球球",
+          content: "再见",
+          avaUrl:
+            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
+        },
+        {
+          username: "球球",
+          content: "再见",
+          avaUrl:
+            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
+        },
+        {
+          username: "球球",
+          content: "再见",
+          avaUrl:
+            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
+        }
+      ]
     };
   },
   mounted() {
@@ -173,7 +243,7 @@ export default {
         }
       });
     },
-    //退出登陆
+    //退出登录
     quitLogin() {
       this.axios.get("/layout").then(res => {
         if (res.status == 200) {
@@ -232,7 +302,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  z-index:1000;
+  z-index: 1000;
   background: #fff;
   box-shadow: 0 1px 3px rgba(26, 26, 26, 0.1);
   &-inner {
@@ -330,20 +400,17 @@ export default {
     .AppHeader-profile {
       display: flex;
       align-items: center;
-      .AppHeader-msg {
-        position: relative;
-        .icon-weibiaoti-_fuzhi {
-          font-size: 22px;
-          color: $fontColor;
-        }
-      }
-
       .AppHeader-profileAvatar {
         width: 30px;
         height: 30px;
         border-radius: 2px;
         margin-left: 30px;
       }
+    }
+    .AppHeader-msg {
+      position: relative;
+      font-size: 22px;
+      color: $fontColor;
     }
 
     .LoginButton {
@@ -459,5 +526,62 @@ export default {
   text-align: center;
   color: $fontColor;
   cursor: pointer;
+}
+//私信
+.PriviteMessage-wrap {
+  padding: 0 !important;
+}
+.PriviteMessage {
+  width: 360px;
+  height: 439px;
+  z-index: 10;
+  font-size: 14px;
+  overflow: scroll;
+  position: relative;
+  .MessageTab {
+    width: 100%;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    border-bottom: #ebebeb solid 1px;
+    background: #ffffff;
+    position: sticky;
+    top: 0;
+    left: 0;
+     cursor: pointer;
+  }
+ 
+  .MessageItem {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    .Avatar {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+      border-radius: 6px;
+    }
+    .MessageUsers-name {
+      font-size: 15px;
+    }
+    .MessageUsers-content {
+      color: $fontColor;
+    }
+    &:hover{
+      background: #ebebeb;
+    }
+  }
+   .MessageFooter {
+      width: 100%;
+      height: 38px;
+      line-height: 38px;
+      text-align: center;
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      border-top: #ebebeb solid 1px;
+      background: #ffffff;
+      cursor: pointer;
+    }
 }
 </style>
