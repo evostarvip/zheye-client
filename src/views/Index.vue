@@ -8,7 +8,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="关注" name="attention">
-          <div v-for="(item,index) in feedList" :key="index">
+          <div v-for="(item,index) in followList" :key="index">
             <feed-item :feedList="item"></feed-item>
           </div>
         </el-tab-pane>
@@ -41,7 +41,8 @@ export default {
   data() {
     return {
       feedList: [],
-      activeName:"recommend"
+      activeName:"recommend",
+      followList:[]
     };
   },
   mounted() {
@@ -85,8 +86,12 @@ export default {
     },
     //切换选项卡
     changeItem(){
-      if(this.activeName = 'attention'){
+      console.log(this.activeName)
+      if(this.activeName == 'attention'){
         //调用接口
+        this.axios.get(`/followList`).then(res=>{
+           this.followList = res.data;
+        })
       }
     }
   }
