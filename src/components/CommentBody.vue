@@ -31,7 +31,7 @@
           :placeholder="'回复'+commentMsg.user.name"
           v-model="replyMsg"
         ></el-input>
-        <button class="CommentReply-button" :disabled="replyMsg.length==0" @click="publishComment">发表</button>
+        <button class="CommentReply-button" :disabled="replyMsg.length==0" @click="publishReply">发表</button>
       </div>
     </transition>
   </div>
@@ -40,7 +40,8 @@
 export default {
   name: "comment-body",
   props: {
-    commentMsg: Object
+    commentMsg: Object,
+    type:Number
   },
   data() {
     return {
@@ -100,12 +101,23 @@ export default {
           });
       }
     },
-    //发布评论
-    publishComment(){
+    //发布回复
+    publishReply(){
       let param = {
         content:this.replyMsg,
         id:this.commentMsg.id,
+        type:2
       }
+      this.axios.post('/comment/add',param).then(res=>{
+        if(res.status == 200){
+           this.$message({
+              message: "评论成功",
+              type: "success"
+            });
+        }
+        this.replyMsg = "";
+        this.$emit('addReply');
+      });
     }
   }
 };

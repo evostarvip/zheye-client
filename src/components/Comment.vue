@@ -42,7 +42,7 @@
         <span class="CommentItem-time">{{item.time}}</span>
       </div>
       <!-- 评论内容 -->
-      <comment-body :commentMsg="item" ></comment-body>
+      <comment-body :commentMsg="item" @addReply="addReply" ></comment-body>
       <template v-if="item.replies.data.length>0">
         <div class="CommentItem-reply" v-for="(reply,replyIndex) in item.replies.data" :key="replyIndex">
           <!-- 回复头 -->
@@ -59,7 +59,7 @@
             <span class="CommentItem-time">{{reply.time}}</span>
           </div>
           <!-- 评论内容 -->
-          <comment-body :commentMsg="reply"></comment-body>
+          <comment-body :commentMsg="reply"  @addReply="addReply"></comment-body>
         </div>
       </template>
     </div>
@@ -74,7 +74,7 @@
     </div>
     <div class="Comment-footer">
       <el-input type="textarea" resize="none" autosize placeholder="写下你的评论……" v-model="comment"></el-input>
-      <button class="CommentReply-button" :disabled="comment.length==0">发布</button>
+      <button class="CommentReply-button" :disabled="comment.length==0" @click="publishComment">发布</button>
     </div>
   </div>
 </template>
@@ -174,11 +174,12 @@ export default {
           ]
         }
       ],
-      comment: ""
+      comment: "",
+      currentPage:1
     };
   },
   mounted() {
-    this.getComment(1);
+    this.getComment(this.currentPage);
   },
   methods: {
     //获取评论
@@ -192,7 +193,26 @@ export default {
     },
     //改变评论页面
     changePage(pageNum) {
-      this.getComment(pageNum);
+      this.currentPage=pageNum;
+      this.getComment(this.currentPage);
+    },
+    //回复评论内容
+    addReply(){
+      this.getComment(this.currentPage)
+    },
+    //发表评论
+    publishComment(){
+
+        this.axios.post('/comment/add',param).then(res=>{
+        if(res.status == 200){
+           this.$message({
+              message: "评论成功",
+              type: "success"
+            });
+        }
+        this.replyMsg = "";
+        this.$emit('addReply');
+      });
     }
   }
 };
