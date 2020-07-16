@@ -16,13 +16,9 @@
         <span class="icon-pinglun1 iconfont"></span>
         <span class="CommentItem-desc">{{isReply? '取消回复':'回复'}}</span>
       </div>
-      <div
-        class="CommentItem-icon HoverIcon"
-        :class="{showIcon:isReply}"
-        @click="commentMsg.isDislike = !commentMsg.isDislike"
-      >
+      <div class="CommentItem-icon HoverIcon" :class="{showIcon:isReply}" @click="changeDislike">
         <span class="icon-cai iconfont"></span>
-        <span class="CommentItem-desc">{{commentMsg.isDislike ? "取消踩" : "踩"}}</span>
+        <span class="CommentItem-desc">{{commentMsg.isDisLike ? "取消踩" : "踩"}}</span>
       </div>
     </div>
     <!-- 回复 -->
@@ -32,10 +28,10 @@
           type="textarea"
           resize="none"
           autosize
-          :placeholder="'回复'+commentMsg.name"
+          :placeholder="'回复'+commentMsg.user.name"
           v-model="replyMsg"
         ></el-input>
-        <button class="CommentReply-button" :disabled="replyMsg.length==0">发表</button>
+        <button class="CommentReply-button" :disabled="replyMsg.length==0" @click="publishComment">发表</button>
       </div>
     </transition>
   </div>
@@ -54,14 +50,62 @@ export default {
     };
   },
   methods: {
-    //   点赞/取消赞
+    //   点赞
     changeLike() {
       if (this.commentMsg.isLike) {
-        this.commentMsg.likeNum--;
+        //取消赞
+        this.axios
+          .get(`support_cancel?id=${this.commentMsg.id}&type=3`)
+          .then(res => {
+            if (res.status == 200) {
+              this.commentMsg.isLike = !this.commentMsg.isLike;
+              this.commentMsg.likeNum--;
+            }
+          });
       } else {
-        this.commentMsg.likeNum++;
+        this.axios.get(`support?id=${this.commentMsg.id}&type=3`).then(res => {
+          if (res.status == 200) {
+            this.commentMsg.isLike = !this.commentMsg.isLike;
+            if (this.commentMsg.isDisLike) {
+              this.commentMsg.isDisLike = false;
+            }
+            this.commentMsg.likeNum++;
+          }
+        });
       }
-      this.commentMsg.isLike = !this.commentMsg.isLike;
+    },
+    //踩
+    changeDislike() {
+      if (this.commentMsg.isDisLike) {
+        //取消踩
+        this.axios
+          .get(`unsupport_cancel?id=${this.commentMsg.id}&type=3`)
+          .then(res => {
+            if (res.status == 200) {
+              this.commentMsg.isDisLike = !this.commentMsg.isDisLike;
+            }
+          });
+      }else{
+         this.axios
+          .get(`unsupport?id=${this.commentMsg.id}&type=3`)
+          .then(res => {
+            if (res.status == 200) {
+              this.commentMsg.isDisLike = !this.commentMsg.isDisLike;
+              if(this.commentMsg.isLike){
+                this.commentMsg.isLike=false;
+                this.commentMsg.likeNum--;
+              }
+
+            }
+          });
+      }
+    },
+    //发布评论
+    publishComment(){
+      let param = {
+        content:this.replyMsg,
+        id:this.commentMsg.id,
+      }
     }
   }
 };
@@ -81,7 +125,7 @@ export default {
   position: relative; //为了分割线
   color: #1a1a1a;
   padding: 0 0 10px 33px;
-  
+
   .CommentItem-content {
     margin-bottom: 6px;
   }

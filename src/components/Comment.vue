@@ -1,18 +1,16 @@
 <!-- 评论功能 -->
 <template>
   <div class="Comment">
-    <div class="CommentTopBar">19条评论</div>
-    <div class="CommentItem" v-for="(item,index) in commentList" :key="index">
+    <div class="CommentTopBar">{{commentList.totalNum}}条评论</div>
+    <div class="CommentItem" v-for="(item,index) in commentList.data" :key="index">
       <!-- 评论头 -->
       <div class="CommentItem-meta">
+        <!-- 个人信息 -->
         <el-popover placement="bottom-start" visible-arrow="false" width="365" trigger="hover">
           <div class="UserCard-wrap">
             <div class="UserMessage">
               <div class="UserAvatar-wrap">
-                <img
-                  src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
-                  class="UserAvatar"
-                />
+                <img :src="item.user.headUrl" class="UserAvatar" />
               </div>
               <span class="UserName">你猜猜</span>
             </div>
@@ -37,20 +35,16 @@
               </div>
             </div>
           </div>
-          <img
-            slot="reference"
-            src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
-            class="CommentItem-avatar"
-          />
+          <img slot="reference" :src="item.user.headUrl" class="CommentItem-avatar" />
         </el-popover>
 
-        <span class="CommentItem-name">{{item.name}}</span>
+        <span class="CommentItem-name">{{item.user.name}}</span>
         <span class="CommentItem-time">{{item.time}}</span>
       </div>
       <!-- 评论内容 -->
-      <comment-body :commentMsg="item.commentMsg"></comment-body>
-      <template v-if="item.replys.length>0">
-        <div class="CommentItem-reply" v-for="(reply,replyIndex) in item.replys" :key="replyIndex">
+      <comment-body :commentMsg="item" ></comment-body>
+      <template v-if="item.replies.data.length>0">
+        <div class="CommentItem-reply" v-for="(reply,replyIndex) in item.replies.data" :key="replyIndex">
           <!-- 回复头 -->
           <div class="CommentItem-meta">
             <img
@@ -58,20 +52,25 @@
               class="CommentItem-avatar"
             />
             <div class="CommentReply-users">
-              <span class="CommentReply-name">{{reply.name}}</span>
+              <span class="CommentReply-name">{{reply.user.name}}</span>
               回复
-              <span class="CommentReply-name">{{reply.responded}}</span>
+              <span class="CommentReply-name">{{reply.responder.name}}</span>
             </div>
             <span class="CommentItem-time">{{reply.time}}</span>
           </div>
           <!-- 评论内容 -->
-          <comment-body :commentMsg="reply.commentMsg"></comment-body>
+          <comment-body :commentMsg="reply"></comment-body>
         </div>
       </template>
     </div>
     <!-- 分页 -->
     <div class="PaginationWrap">
-      <el-pagination   layout="prev, pager, next" :total="1000" :hide-on-single-page="true" @current-change="changePage"></el-pagination>
+      <el-pagination
+        layout="prev, pager, next"
+        :total="commentList.totalNum"
+        :hide-on-single-page="true"
+        @current-change="changePage"
+      ></el-pagination>
     </div>
     <div class="Comment-footer">
       <el-input type="textarea" resize="none" autosize placeholder="写下你的评论……" v-model="comment"></el-input>
@@ -85,6 +84,9 @@ export default {
   name: "comment",
   components: {
     CommentBody
+  },
+  props: {
+    id: Number,
   },
   data() {
     return {
@@ -133,7 +135,7 @@ export default {
               responded: "被回复的人",
               time: "04-11",
               commentMsg: {
-                id:4,
+                id: 4,
                 name: "回复的人",
                 content: "你管我说什么玩意",
                 likeNum: "0",
@@ -175,10 +177,22 @@ export default {
       comment: ""
     };
   },
-  methods:{
+  mounted() {
+    this.getComment(1);
+  },
+  methods: {
+    //获取评论
+    getComment(page) {
+      this.axios
+        .get(`/comment/list?id=${this.id}&type=${1}&page=${page}`)
+        .then(res => {
+          console.log(res);
+          this.commentList = res.data;
+        });
+    },
     //改变评论页面
-    changePage(pageNum){
-      
+    changePage(pageNum) {
+      this.getComment(pageNum);
     }
   }
 };
@@ -333,7 +347,7 @@ export default {
   }
 }
 //分页
-.PaginationWrap{
-    padding: 0 40px;
+.PaginationWrap {
+  padding: 0 40px;
 }
 </style>

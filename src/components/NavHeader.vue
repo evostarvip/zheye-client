@@ -6,7 +6,7 @@
       <!-- 导航栏 -->
       <ul class="AppHeader-tabs">
         <li class="Tabs-item">
-          <a href="/" class="Tabs-link isActive">首页</a>
+          <router-link to="/" replace class="Tabs-link isActive">首页</router-link>
         </li>
       </ul>
       <!-- 搜索框 -->

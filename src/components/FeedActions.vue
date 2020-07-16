@@ -56,14 +56,7 @@ export default {
         this.axios.get(`support_cancel?type=2&id=${this.id}`).then(res => {
           if (res.status == 200) {
             this.actions.isAgree = !this.actions.isAgree;
-            if (this.actions.isAgree) {
-              if (this.actions.disagree) {
-                this.actions.disagree = false;
-              }
-              this.actions.agreeNum++;
-            } else {
-              this.actions.agreeNum--;
-            }
+            this.actions.agreeNum--;
           }
         });
       } else {
@@ -71,14 +64,10 @@ export default {
         this.axios.get(`/support?type=2&id=${this.id}`).then(res => {
           if (res.status == 200) {
             this.actions.isAgree = !this.actions.isAgree;
-            if (this.actions.isAgree) {
-              if (this.actions.disagree) {
+             if (this.actions.disagree) {
                 this.actions.disagree = false;
               }
               this.actions.agreeNum++;
-            } else {
-              this.actions.agreeNum--;
-            }
           }
         });
       }
@@ -89,10 +78,6 @@ export default {
         this.axios.get(`/unsupport_cancel?type=2&id=${this.id}`).then(res => {
           if (res.status == 200) {
             this.actions.disagree = !this.actions.disagree;
-            if (this.actions.disagree && this.actions.isAgree) {
-              this.actions.isAgree = false;
-              this.actions.agreeNum--;
-            }
           }
         });
       } else {
@@ -100,7 +85,7 @@ export default {
         this.axios.get(`/unsupport?type=2&id=${this.id}`).then(res => {
           if (res.status == 200) {
             this.actions.disagree = !this.actions.disagree;
-            if (this.actions.disagree && this.actions.isAgree) {
+            if (this.actions.isAgree) {
               this.actions.isAgree = false;
               this.actions.agreeNum--;
             }

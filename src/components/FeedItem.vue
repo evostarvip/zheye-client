@@ -10,12 +10,13 @@
       :content="feedList.detail"
     ></feed-content>
     <feed-actions
+      v-if="feedList.detail"
       @changeReview="isReview=!isReview"
       :actions="feedList.actions"
       :id="feedList.detail?feedList.detail.id:0"
     ></feed-actions>
     <transition name="fade">
-      <comment v-if="isReview"></comment>
+      <comment v-if="isReview"  :id="feedList.detail?feedList.detail.id:0" ></comment>
     </transition>
   </div>
 </template>
