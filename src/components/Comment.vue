@@ -17,6 +17,7 @@
       <comment-body :commentMsg="item.commentMsg"></comment-body>
       <template v-if="item.replys.length>0">
         <div class="CommentItem-reply" v-for="(reply,replyIndex) in item.replys" :key="replyIndex">
+          <!-- 回复头 -->
           <div class="CommentItem-meta">
             <img
               src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
@@ -54,6 +55,7 @@ export default {
           name: "英雄登场",
           time: "04-11",
           commentMsg: {
+            id: 1,
             name: "英雄登场",
             content: "你在说什么玩意",
             likeNum: "12",
@@ -66,6 +68,7 @@ export default {
               responded: "被回复的人",
               time: "04-11",
               commentMsg: {
+                id: 2,
                 name: "回复的人",
                 content: "你管我说什么玩意",
                 likeNum: "0",
@@ -79,6 +82,7 @@ export default {
           name: "英雄登场",
           time: "04-11",
           commentMsg: {
+            id: 3,
             name: "英雄登场",
             content: "你在说什么玩意",
             likeNum: "12",
@@ -91,8 +95,8 @@ export default {
               responded: "被回复的人",
               time: "04-11",
               commentMsg: {
-              name: "回复的人",
-
+                name: "回复的人",
+                id: 4,
                 content: "你管我说什么玩意",
                 likeNum: "0",
                 isLike: false,
@@ -105,6 +109,7 @@ export default {
           name: "英雄登场",
           time: "04-11",
           commentMsg: {
+            id: 5,
             name: "英雄登场",
             content: "你在说什么玩意",
             likeNum: "12",
@@ -117,8 +122,8 @@ export default {
               responded: "被回复的人",
               time: "04-11",
               commentMsg: {
-              name: "回复的人",
-
+                name: "回复的人",
+                id: 6,
                 content:
                   "你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意你管我说什么玩意",
                 likeNum: "12",

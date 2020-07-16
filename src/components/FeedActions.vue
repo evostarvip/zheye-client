@@ -51,31 +51,62 @@ export default {
     },
     //改变赞同状态
     changeAgree() {
-      // 点赞
-      this.axios.get(`/support?type=1&id=${this.id}`).then(res => {
-        if (res.status == 200) {
-          this.actions.isAgree = !this.actions.isAgree;
-          if (this.actions.isAgree) {
-            if (this.actions.disagree) {
-              this.actions.disagree = false;
+      if (this.actions.isAgree) {
+        //取消赞
+        this.axios.get(`support_cancel?type=2&id=${this.id}`).then(res => {
+          if (res.status == 200) {
+            this.actions.isAgree = !this.actions.isAgree;
+            if (this.actions.isAgree) {
+              if (this.actions.disagree) {
+                this.actions.disagree = false;
+              }
+              this.actions.agreeNum++;
+            } else {
+              this.actions.agreeNum--;
             }
-            this.actions.agreeNum++;
-          } else {
-            this.actions.agreeNum--;
           }
-        }
-      });
+        });
+      } else {
+        // 点赞
+        this.axios.get(`/support?type=2&id=${this.id}`).then(res => {
+          if (res.status == 200) {
+            this.actions.isAgree = !this.actions.isAgree;
+            if (this.actions.isAgree) {
+              if (this.actions.disagree) {
+                this.actions.disagree = false;
+              }
+              this.actions.agreeNum++;
+            } else {
+              this.actions.agreeNum--;
+            }
+          }
+        });
+      }
     },
     changeDisagree() {
-      this.axios.get(`/unsupport?type=1&id=${this.id}`).then(res => {
-        if (res.status == 200) {
-          this.actions.disagree = !this.actions.disagree;
-          if (this.actions.disagree && this.actions.isAgree) {
-            this.actions.isAgree = false;
-            this.actions.agreeNum--;
+      if (this.actions.disagree) {
+        //取消踩
+        this.axios.get(`/unsupport_cancel?type=2&id=${this.id}`).then(res => {
+          if (res.status == 200) {
+            this.actions.disagree = !this.actions.disagree;
+            if (this.actions.disagree && this.actions.isAgree) {
+              this.actions.isAgree = false;
+              this.actions.agreeNum--;
+            }
           }
-        }
-      });
+        });
+      } else {
+        //踩
+        this.axios.get(`/unsupport?type=2&id=${this.id}`).then(res => {
+          if (res.status == 200) {
+            this.actions.disagree = !this.actions.disagree;
+            if (this.actions.disagree && this.actions.isAgree) {
+              this.actions.isAgree = false;
+              this.actions.agreeNum--;
+            }
+          }
+        });
+      }
     }
   }
 };
