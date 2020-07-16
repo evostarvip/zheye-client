@@ -12,7 +12,7 @@
     <feed-actions
       v-if="feedList.detail"
       @changeReview="isReview=!isReview"
-      :actions="feedList.actions"
+      :actions="feedList.detail.actions"
       :id="feedList.detail?feedList.detail.id:0"
     ></feed-actions>
     <transition name="fade">
@@ -48,7 +48,7 @@ export default {
     //进入详情页
     goToDetail(id) {
       this.$router.push({
-        path: `detail/${id}`,
+        path: `/detail/${id}`,
         params: {
           id: id
         }

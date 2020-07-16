@@ -7,8 +7,10 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import VueCookies from 'vue-cookie';
 import 'element-ui/lib/theme-chalk/index.css';
+axios.defaults.baseURL = '/';
 
 axios.interceptors.response.use(function(response){
+  console.log(response)
   return response
 },(error)=>{
   let res = error.response;
@@ -18,7 +20,6 @@ axios.interceptors.response.use(function(response){
     ElementUI.Message.error("请先登陆")
    }
 });
-
 Vue.use(ElementUI);
 Vue.use(VueAxios,axios);
 Vue.use(VueCookies)

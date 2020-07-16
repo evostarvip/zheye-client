@@ -6,7 +6,7 @@
     ></rich-content>
     <feed-actions @changeReview="isReview=!isReview" :actions="answerList.actions" :id="answerList.id" ></feed-actions>
     <transition name="fade">
-      <comment v-if="isReview" :id="feedList.detail?feedList.detail.id:0"></comment>
+      <comment v-if="isReview" :id="answerList.id?answerList.id:0"></comment>
     </transition>
   </div>
 </template>

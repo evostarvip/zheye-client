@@ -70,7 +70,7 @@
     <div class="QuestionMain">
       <div class="List">
         <div class="ListHeader">{{msg.answerNum}}个回答</div>
-        <div class="ListItem" v-for="(item,index) in msg.answerList" :key="index">
+        <div  v-for="(item,index) in msg.answerList" :key="index">
           <question-list :answerList="item"></question-list>
         </div>
       </div>
@@ -311,13 +311,13 @@ export default {
   background: #ffffff;
   .List {
     padding: 0 20px;
-    .ListHeader {
+  .ListHeader {
       height: 50px;
       border-bottom: 1px solid #f6f6f6;
       line-height: 50px;
       font-weight: 600;
     }
-    .ListItem {
+  .ListItem {
       padding: 16px 0;
       border-bottom: 1px solid #ebebeb;
     }

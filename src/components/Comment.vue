@@ -52,7 +52,7 @@
           <!-- 回复头 -->
           <div class="CommentItem-meta">
             <img
-              src="http://img2.imgtn.bdimg.com/it/u=1354268575,1268995723&fm=26&gp=0.jpg"
+               :src="reply.user.headUrl"
               class="CommentItem-avatar"
             />
             <div class="CommentReply-users">
