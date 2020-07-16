@@ -42,9 +42,13 @@
         <span class="CommentItem-time">{{item.time}}</span>
       </div>
       <!-- 评论内容 -->
-      <comment-body :commentMsg="item" @addReply="addReply" ></comment-body>
+      <comment-body :commentMsg="item" @addReply="addReply"></comment-body>
       <template v-if="item.replies.data.length>0">
-        <div class="CommentItem-reply" v-for="(reply,replyIndex) in item.replies.data" :key="replyIndex">
+        <div
+          class="CommentItem-reply"
+          v-for="(reply,replyIndex) in item.replies.data"
+          :key="replyIndex"
+        >
           <!-- 回复头 -->
           <div class="CommentItem-meta">
             <img
@@ -59,7 +63,7 @@
             <span class="CommentItem-time">{{reply.time}}</span>
           </div>
           <!-- 评论内容 -->
-          <comment-body :commentMsg="reply"  @addReply="addReply"></comment-body>
+          <comment-body :commentMsg="reply" @addReply="addReply"></comment-body>
         </div>
       </template>
     </div>
@@ -86,7 +90,7 @@ export default {
     CommentBody
   },
   props: {
-    id: Number,
+    id: Number
   },
   data() {
     return {
@@ -175,7 +179,7 @@ export default {
         }
       ],
       comment: "",
-      currentPage:1
+      currentPage: 1
     };
   },
   mounted() {
@@ -193,25 +197,29 @@ export default {
     },
     //改变评论页面
     changePage(pageNum) {
-      this.currentPage=pageNum;
+      this.currentPage = pageNum;
       this.getComment(this.currentPage);
     },
     //回复评论内容
-    addReply(){
-      this.getComment(this.currentPage)
+    addReply() {
+      this.getComment(this.currentPage);
     },
     //发表评论
-    publishComment(){
-
-        this.axios.post('/comment/add',param).then(res=>{
-        if(res.status == 200){
-           this.$message({
-              message: "评论成功",
-              type: "success"
-            });
+    publishComment(id) {
+      let param = {
+        content: this.comment,
+        id: this.id,
+        type:1
+      };
+      this.axios.post("/comment/add", param).then(res => {
+        if (res.status == 200) {
+          this.$message({
+            message: "评论成功",
+            type: "success"
+          });
         }
-        this.replyMsg = "";
-        this.$emit('addReply');
+        this.comment = "";
+        this.getComment(this.currentPage);
       });
     }
   }
