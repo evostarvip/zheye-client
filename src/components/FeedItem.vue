@@ -9,7 +9,11 @@
       :summary="feedList.summary"
       :content="feedList.detail"
     ></feed-content>
-    <feed-actions @changeReview="isReview=!isReview" :actions="feedList.actions" :id="feedList.detail.id"></feed-actions>
+    <feed-actions
+      @changeReview="isReview=!isReview"
+      :actions="feedList.actions"
+      :id="feedList.detail?feedList.detail.id:0"
+    ></feed-actions>
     <transition name="fade">
       <comment v-if="isReview"></comment>
     </transition>
