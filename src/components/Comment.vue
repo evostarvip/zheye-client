@@ -2,7 +2,6 @@
 <template>
   <div class="Comment">
     <div class="CommentTopBar">19条评论</div>
-
     <div class="CommentItem" v-for="(item,index) in commentList" :key="index">
       <!-- 评论头 -->
       <div class="CommentItem-meta">
@@ -68,6 +67,10 @@
           <comment-body :commentMsg="reply.commentMsg"></comment-body>
         </div>
       </template>
+    </div>
+    <!-- 分页 -->
+    <div class="PaginationWrap">
+      <el-pagination   layout="prev, pager, next" :total="1000" :hide-on-single-page="true" @current-change="changePage"></el-pagination>
     </div>
     <div class="Comment-footer">
       <el-input type="textarea" resize="none" autosize placeholder="写下你的评论……" v-model="comment"></el-input>
@@ -166,6 +169,12 @@ export default {
       ],
       comment: ""
     };
+  },
+  methods:{
+    //改变评论页面
+    changePage(pageNum){
+      
+    }
   }
 };
 </script>
@@ -317,5 +326,9 @@ export default {
       cursor: pointer;
     }
   }
+}
+//分页
+.PaginationWrap{
+    padding: 0 40px;
 }
 </style>
