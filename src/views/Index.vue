@@ -1,13 +1,17 @@
 <template>
   <div class="Topstory-container">
     <div class="Topstory-mainColumn" @scroll="scroll">
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" @tab-click="changeItem">
         <el-tab-pane label="推荐" name="recommend">
           <div v-for="(item,index) in feedList" :key="index">
             <feed-item :feedList="item"></feed-item>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="关注" name="attention">配置管理</el-tab-pane>
+        <el-tab-pane label="关注" name="attention">
+          <div v-for="(item,index) in feedList" :key="index">
+            <feed-item :feedList="item"></feed-item>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </div>
     <div class="GlobalSideBar">
@@ -78,11 +82,18 @@ export default {
     scroll(e) {
       console.log(e);
       console.log("滚动");
+    },
+    //切换选项卡
+    changeItem(){
+      if(this.activeName = 'attention'){
+        //调用接口
+      }
     }
   }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
+@import "../assets/css/config";
 .Topstory-container {
   display: flex;
   width: 1000px;
@@ -93,6 +104,24 @@ export default {
 .Topstory-mainColumn {
   width: 654px;
   height: 100%;
+  .el-tabs__header{
+    background: #ffffff;
+    padding: 10px 20px;
+    margin: 0;
+    border-bottom: 1px solid #ebebeb;
+  }
+  .el-tabs__item{
+    font-size: 16px;
+  }
+  .el-tabs__item.is-active{
+    color: $mainColor;
+  }
+  .el-tabs__nav-wrap::after{
+    background: transparent;
+  }
+  .el-tabs__active-bar{
+    height: 0;
+  }
 }
 .GlobalSideBar {
   margin-left: 10px;

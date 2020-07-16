@@ -6,38 +6,7 @@
       <!-- 评论头 -->
       <div class="CommentItem-meta">
         <!-- 个人信息 -->
-        <el-popover placement="bottom-start" visible-arrow="false" width="365" trigger="hover">
-          <div class="UserCard-wrap">
-            <div class="UserMessage">
-              <div class="UserAvatar-wrap">
-                <img :src="item.user.headUrl" class="UserAvatar" />
-              </div>
-              <span class="UserName">你猜猜</span>
-            </div>
-            <div class="UserContent">
-              <div class="UserContent-detail">
-                <div class="UserContent-title">回答</div>
-                <div class="UserContent-num">0</div>
-              </div>
-              <div class="UserContent-detail">
-                <div class="UserContent-title">关注者</div>
-                <div class="UserContent-num">0</div>
-              </div>
-            </div>
-            <div class="UserButton">
-              <div class="AttentionBtn">
-                <span class="iconfont icon-jia"></span>
-                <span>关注</span>
-              </div>
-              <div class="ChatBtn">
-                <span class="iconfont icon-xiaoxi"></span>
-                <span>发私信</span>
-              </div>
-            </div>
-          </div>
-          <img slot="reference" :src="item.user.headUrl" class="CommentItem-avatar" />
-        </el-popover>
-
+            <user-card :user="item.user"></user-card>
         <span class="CommentItem-name">{{item.user.name}}</span>
         <span class="CommentItem-time">{{item.time}}</span>
       </div>
@@ -51,10 +20,8 @@
         >
           <!-- 回复头 -->
           <div class="CommentItem-meta">
-            <img
-               :src="reply.user.headUrl"
-              class="CommentItem-avatar"
-            />
+            <!-- 个人信息 -->
+            <user-card :user="reply.user"></user-card>
             <div class="CommentReply-users">
               <span class="CommentReply-name">{{reply.user.name}}</span>
               回复
@@ -84,10 +51,13 @@
 </template>
 <script>
 import CommentBody from "@/components/CommentBody.vue";
+import UserCard from "@/components/UserCard.vue";
+
 export default {
   name: "comment",
   components: {
-    CommentBody
+    CommentBody,
+    UserCard
   },
   props: {
     id: Number
@@ -209,7 +179,7 @@ export default {
       let param = {
         content: this.comment,
         id: this.id,
-        type:1
+        type: 1
       };
       this.axios.post("/comment/add", param).then(res => {
         if (res.status == 200) {

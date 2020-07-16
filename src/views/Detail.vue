@@ -30,7 +30,11 @@
       <div class="QuestionHeader-footer">
         <div class="QuestionHeader-footer-inner">
           <div class="QuestionButton-groups">
-            <button class="QuestionButton-follow">关注问题</button>
+            <button
+              class="QuestionButton-follow"
+              :class="{AttentionButton:msg.isFollow}"
+              @click="focusQuestion"
+            >{{followTip}}</button>
             <button class="QuestionButton-ask" @click="writeAnswer">
               <span class="iconfont icon-pen"></span>
               写回答
@@ -70,7 +74,7 @@
     <div class="QuestionMain">
       <div class="List">
         <div class="ListHeader">{{msg.answerNum}}个回答</div>
-        <div  v-for="(item,index) in msg.answerList" :key="index">
+        <div v-for="(item,index) in msg.answerList" :key="index">
           <question-list :answerList="item"></question-list>
         </div>
       </div>
@@ -87,10 +91,11 @@ export default {
   name: "detail",
   components: {
     Editor,
-    QuestionList,
+    QuestionList
   },
   data() {
     return {
+      followTip: "关注问题",
       user: {},
       msg: {},
       isShowMore: true,
@@ -110,11 +115,10 @@ export default {
       this.axios.get(`/question/detail?qid=${id}`).then(res => {
         if (res.status == 200) {
           this.msg = res.data;
-          this.answerList = res.data.answerList;
-          this.title = res.data.title;
-          this.summary = res.data.summary;
-          this.answerNum = res.data.answerNum;
           detail = res.data.detail;
+          if (res.data.isFollow) {
+            this.followTip = "已关注";
+          }
         }
       });
     },
@@ -152,6 +156,24 @@ export default {
           this.getDetailMsg();
         }
       });
+    },
+    //关注问题
+    focusQuestion() {
+      if (this.msg.isFollow) {
+        this.axios.get(`/follow/question_cancel?id=${this.msg.id}`).then(res => {
+          if (res.status == 200) {
+            this.msg.isFollow = !this.msg.isFollow;
+            this.followTip="关注问题"
+          }
+        });
+      } else {
+        this.axios.get(`/follow/question?id=${this.msg.id}`).then(res => {
+          if (res.status == 200) {
+            this.msg.isFollow = !this.msg.isFollow;
+            this.followTip="已关注"
+          }
+        });
+      }
     }
   }
 };
@@ -237,9 +259,10 @@ export default {
         height: 34px;
         margin-right: 10px;
         border: 1px solid $mainColor;
-        &:hover {
-          background: #097fec;
-        }
+      }
+      .AttentionButton {
+        background: $fontColor;
+        border: 1px solid $fontColor;
       }
       .QuestionButton-ask {
         cursor: pointer;
@@ -311,17 +334,20 @@ export default {
   background: #ffffff;
   .List {
     padding: 0 20px;
-  .ListHeader {
+    .ListHeader {
       height: 50px;
       border-bottom: 1px solid #f6f6f6;
       line-height: 50px;
       font-weight: 600;
     }
-  .ListItem {
+    .ListItem {
       padding: 16px 0;
       border-bottom: 1px solid #ebebeb;
     }
   }
+  
 }
+
+
 </style>
 
