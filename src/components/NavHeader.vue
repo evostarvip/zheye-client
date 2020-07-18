@@ -299,11 +299,10 @@ export default {
       this.axios.get(`search?search=${this.searchItem}`).then(res => {
         if (res.status == 200) {
           this.$store.dispatch("search", this.searchItem);
-          this.$store.dispatch("setIsAdd", true);
-          this.searchItem=""
+          this.$store.dispatch("setSearchList", res.data);
+          this.searchItem='';
         }
       });
-      console.log(this.searchItem);
     }
   }
 };

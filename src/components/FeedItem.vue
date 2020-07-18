@@ -48,6 +48,8 @@ export default {
   watch: {
     searchContent: function(newValue) {
       this.keyword = newValue;
+      console.log("更改关键词")
+      console.log(newValue)
     }
   },
   data() {
@@ -72,6 +74,7 @@ export default {
     },
     //搜索高亮
     brightenKeyword(val, keyword) {
+      console.log('高亮')
       if (keyword.length > 0) {
         let keywordArr = keyword.split("");
         val = val + "";

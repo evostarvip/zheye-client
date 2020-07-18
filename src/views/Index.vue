@@ -31,18 +31,22 @@ export default {
   },
   computed: {
     //监听词条
-    ...mapGetters(["isAdd"])
+    ...mapGetters(["isAdd", "searchList"])
   },
   watch: {
     isAdd: function(newValue) {
       this.getContent();
+    },
+    searchList: function(newValue) {
+      this.feedList = newValue;
+      console.log("更新列表");
     }
   },
   data() {
     return {
       feedList: [],
-      activeName:"recommend",
-      followList:[]
+      activeName: "recommend",
+      followList: []
     };
   },
   mounted() {
@@ -69,6 +73,7 @@ export default {
   methods: {
     //获取数据
     getContent() {
+      this.$store.dispatch("search", "");
       this.axios
         .get("/index")
         .then(res => {
@@ -85,13 +90,15 @@ export default {
       console.log("滚动");
     },
     //切换选项卡
-    changeItem(){
-      console.log(this.activeName)
-      if(this.activeName == 'attention'){
+    changeItem() {
+      console.log(this.activeName);
+      if (this.activeName == "attention") {
         //调用接口
-        this.axios.get(`/followList`).then(res=>{
-           this.followList = res.data;
-        })
+        this.axios.get(`/followList`).then(res => {
+          this.followList = res.data;
+        });
+      } else {
+        this.getContent();
       }
     }
   }
@@ -109,22 +116,22 @@ export default {
 .Topstory-mainColumn {
   width: 654px;
   height: 100%;
-  .el-tabs__header{
+  .el-tabs__header {
     background: #ffffff;
     padding: 10px 20px;
     margin: 0;
     border-bottom: 1px solid #ebebeb;
   }
-  .el-tabs__item{
+  .el-tabs__item {
     font-size: 16px;
   }
-  .el-tabs__item.is-active{
+  .el-tabs__item.is-active {
     color: $mainColor;
   }
-  .el-tabs__nav-wrap::after{
+  .el-tabs__nav-wrap::after {
     background: transparent;
   }
-  .el-tabs__active-bar{
+  .el-tabs__active-bar {
     height: 0;
   }
 }
