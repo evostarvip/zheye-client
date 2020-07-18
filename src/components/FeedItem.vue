@@ -2,12 +2,18 @@
   <!-- 首页feed的每一项 -->
 <template>
   <div class="TopstoryItem">
-    <div class="ContentItem-title" @click="goToDetail(feedList.id)">{{feedList.title}}</div>
+    <div
+      class="ContentItem-title"
+      @click="goToDetail(feedList.id)"
+      v-html="brightenKeyword(feedList.title,keyword)"
+    ></div>
     <feed-content
+    ref="feedContent"
       v-if="feedList.answer"
       :author="feedList.answer"
       :summary="feedList.summary"
       :content="feedList.detail"
+      :keyword="keyword"
     ></feed-content>
     <feed-actions
       v-if="feedList.detail"
@@ -16,7 +22,7 @@
       :id="feedList.detail?feedList.detail.id:0"
     ></feed-actions>
     <transition name="fade">
-      <comment v-if="isReview"  :id="feedList.detail?feedList.detail.id:0" ></comment>
+      <comment v-if="isReview" :id="feedList.detail?feedList.detail.id:0"></comment>
     </transition>
   </div>
 </template>
@@ -24,6 +30,7 @@
 import FeedContent from "@/components/FeedContent.vue";
 import FeedActions from "@/components/FeedActions.vue";
 import Comment from "@/components/Comment.vue";
+import { mapGetters } from "vuex";
 
 export default {
   name: "feed-item",
@@ -35,12 +42,20 @@ export default {
   props: {
     feedList: Object
   },
+  computed: {
+    ...mapGetters(["searchContent"])
+  },
+  watch: {
+    searchContent: function(newValue) {
+      this.keyword = newValue;
+    }
+  },
   data() {
     return {
-      isReview: false
+      isReview: false,
+      keyword: ""
     };
   },
-
   methods: {
     changeReview() {
       console.log("changeReview");
@@ -54,6 +69,24 @@ export default {
         }
       });
       console.log(id);
+    },
+    //搜索高亮
+    brightenKeyword(val, keyword) {
+      if (keyword.length > 0) {
+        let keywordArr = keyword.split("");
+        val = val + "";
+        keywordArr.forEach(item => {
+          if (val.indexOf(item) !== -1 && item !== "") {
+            val = val.replace(
+              new RegExp(item,'g'),
+              '<font color="#f75353">' + item + "</font>"
+            );
+          }
+        });
+        return val;
+      } else {
+        return val;
+      }
     }
   }
 };

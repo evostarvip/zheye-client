@@ -17,6 +17,8 @@
           type="text"
           class="SearchBar-input"
           placeholder="计算机学生应该如何学习"
+          @keyup.enter="search"
+          v-model="searchItem"
         />
         <span class="iconfont icon-icon161603" :class="{Icons:isFocus}"></span>
       </div>
@@ -131,7 +133,7 @@ import util from "@/utils/index.js";
 export default {
   name: "nav-header",
   components: {
-    Modal,
+    Modal
   },
   data() {
     return {
@@ -193,7 +195,8 @@ export default {
           avaUrl:
             "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
         }
-      ]
+      ], //私信消息
+      searchItem: "" //搜索内容
     };
   },
   mounted() {
@@ -290,6 +293,17 @@ export default {
           this.$store.dispatch("setIsAdd", true);
         }
       });
+    },
+    //搜索问题
+    search() {
+      this.axios.get(`search?search=${this.searchItem}`).then(res => {
+        if (res.status == 200) {
+          this.$store.dispatch("search", this.searchItem);
+          this.$store.dispatch("setIsAdd", true);
+          this.searchItem=""
+        }
+      });
+      console.log(this.searchItem);
     }
   }
 };
@@ -548,9 +562,9 @@ export default {
     position: sticky;
     top: 0;
     left: 0;
-     cursor: pointer;
+    cursor: pointer;
   }
- 
+
   .MessageItem {
     display: flex;
     align-items: center;
@@ -567,21 +581,21 @@ export default {
     .MessageUsers-content {
       color: $fontColor;
     }
-    &:hover{
+    &:hover {
       background: #ebebeb;
     }
   }
-   .MessageFooter {
-      width: 100%;
-      height: 38px;
-      line-height: 38px;
-      text-align: center;
-      position: sticky;
-      bottom: 0;
-      left: 0;
-      border-top: #ebebeb solid 1px;
-      background: #ffffff;
-      cursor: pointer;
-    }
+  .MessageFooter {
+    width: 100%;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    border-top: #ebebeb solid 1px;
+    background: #ffffff;
+    cursor: pointer;
+  }
 }
 </style>
