@@ -1,6 +1,6 @@
 <template>
   <div class="Topstory-container">
-    <div class="Topstory-mainColumn" @scroll="scroll">
+    <div class="Topstory-mainColumn">
       <el-tabs v-model="activeName" @tab-click="changeItem">
         <el-tab-pane label="推荐" name="recommend">
           <div v-for="(item,index) in feedList" :key="index">
@@ -13,6 +13,7 @@
           </div>
         </el-tab-pane>
       </el-tabs>
+      <div class="Loading"></div>
     </div>
     <div class="GlobalSideBar">
       <global-side-bar></global-side-bar>
@@ -23,6 +24,10 @@
 import FeedItem from "@/components/FeedItem.vue";
 import GlobalSideBar from "@/components/GlobalSideBar.vue";
 import { mapGetters } from "vuex";
+import util from "@/utils/index.js";
+import { Loading } from "element-ui";
+
+let Load;
 export default {
   name: "index",
   components: {
@@ -46,57 +51,71 @@ export default {
     return {
       feedList: [],
       activeName: "recommend",
-      followList: []
+      followList: [],
+      isLoad: false,
+      recPage: 1, //推荐页面page
+      attPage: 1 //关注页面page
     };
   },
   mounted() {
     this.getContent();
-    //   window.addEventListener('scroll', function(){
-    //   var scr = document.documentElement.scrollTop || document.body.scrollTop; // 向上滚动的那一部分高度
-    //   var clientHeight = document.documentElement.clientHeight; // 屏幕高度也就是当前设备静态下你所看到的视觉高度
-    //   var scrHeight = document.documentElement.scrollHeight || document.body.scrollHeight; // 整个网页的实际高度，兼容Pc端
-
-    //  console.log("scr : "+scr);
-    //  console.log("clientHeight : "+clientHeight);
-    //  console.log("scrHeight : "+scrHeight);
-
-    //  if(scr + clientHeight + 10 >= scrHeight){
-    //    if(_this.isMoreLoad){ //this.isMoreLoad控制滚动是否加载更多
-    //   	_this.definePageNum = _this.definePageNum + 1; // 加载更多是definePageNum+1
-    //      _this.scrollLoadMore();
-    //    }else{
-    //      return;
-    //    }
-    //  }
-    //  });
+    this.listenScroll(document.documentElement);
   },
   methods: {
-    //获取数据
+    //推荐页面获取数据
     getContent() {
       this.$store.dispatch("search", "");
-      this.axios
-        .get("/index")
-        .then(res => {
-          if (res.status == 200) {
-            this.feedList = res.data;
-            this.$store.dispatch("setIsAdd", false);
-          }
-        })
-        .catch(err => {});
+      this.axios.get(`/index?page=${this.recPage}`).then(res => {
+        if (res.status == 200) {
+          this.feedList = this.feedList.concat(res.data);
+          this.$store.dispatch("setIsAdd", false);
+          Load.close();
+          this.isLoad = false;
+        }
+      });
+    },
+    //关注页面获取数据
+    getAttention() {
+      this.axios.get(`/followList?page=${this.attPage}`).then(res => {
+        if (res.status == 200) {
+          this.followList = this.followList.concat(res.data);
+          Load.close();
+          this.isLoad = false;
+        }
+      });
     },
     //滚动
-    scroll(e) {
-      console.log(e);
-      console.log("滚动");
+    listenScroll(ele) {
+      let that = this;
+      window.addEventListener("scroll", function() {
+        let scr = ele.scrollTop; // 向上滚动的那一部分高度
+        let clientHeight = ele.clientHeight; // 屏幕高度也就是当前设备静态下你所看到的视觉高度
+        let scrHeight = ele.scrollHeight; // 整个网页的实际高度，兼容Pc端
+        if (scr + clientHeight + 50 >= scrHeight) {
+          console.log("到底了");
+          Load = Loading.service({
+            target: ".Loading",
+            fullscreen: false,
+            spinner: "el-icon-loading",
+            text: "拼命加载中"
+          });
+          that.isLoad = true;
+          if (that.activeName == "recommend") {
+            that.recPage++;
+            that.getContent();
+          } else {
+            that.attPage++;
+            that.getAttention();
+          }
+        }
+      });
     },
     //切换选项卡
     changeItem() {
       console.log(this.activeName);
       if (this.activeName == "attention") {
         //调用接口
-        this.axios.get(`/followList`).then(res => {
-          this.followList = res.data;
-        });
+        this.getAttention();
       } else {
         this.getContent();
       }
@@ -138,5 +157,8 @@ export default {
 .GlobalSideBar {
   margin-left: 10px;
   flex: 1;
+}
+.Loading {
+  height: 50px;
 }
 </style>

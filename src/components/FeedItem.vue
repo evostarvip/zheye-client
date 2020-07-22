@@ -74,7 +74,6 @@ export default {
     },
     //搜索高亮
     brightenKeyword(val, keyword) {
-      console.log('高亮')
       if (keyword.length > 0) {
         let keywordArr = keyword.split("");
         val = val + "";

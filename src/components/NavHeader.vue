@@ -30,7 +30,8 @@
       >提问</button>
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
-        <div class="AppHeader-msg">
+        
+        <div class="AppHeader-msg" >
           <el-popover
             v-if="isLogin"
             placement="bottom"
@@ -49,13 +50,15 @@
                   </div>
                 </div>
               </div>
-              <div class="MessageFooter">查看全部私信</div>
+
+             <div class="MessageFooter">
+                <router-link to="/contact">查看全部私信</router-link> 
+               </div>
+              
             </div>
 
             <span slot="reference" class="iconfont icon-weibiaoti-_fuzhi"></span>
           </el-popover>
-
-          <!-- <pover-content></pover-content> -->
         </div>
         <div class="AppHeader-profile">
           <el-popover v-if="isLogin" placement="bottom" width="150" trigger="click">

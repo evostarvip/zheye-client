@@ -9,7 +9,7 @@
             <div class="UserContent">
               <div class="UserMsg">
                 <span class="UserName">{{item.username}}</span>
-                <span class="MsgTime">06-22</span>
+                <span class="MsgTime">{{item.time}}</span>
               </div>
               <div class="UserSnippet">{{item.content}}</div>
             </div>
@@ -47,7 +47,6 @@
 </template>
 <script>
 import util from "@/utils/index.js";
-
 export default {
   name: "contact",
   components: {},
@@ -64,7 +63,7 @@ export default {
             "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
         },
         {
-          id: 1,
+          id: 11,
           content: "我说你可真好看",
           avaUrl:
             "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
@@ -116,6 +115,9 @@ export default {
   mounted() {
     this.initWebsocket();
     this.uid = util.getUser().id;
+    console.log(this.uid)
+    this.userList[0].time = util.changeTime(1584779922)
+    console.log( this.userList[0].time)
   },
   methods: {
     //创建websocket链接

@@ -10,7 +10,6 @@ import 'element-ui/lib/theme-chalk/index.css';
 axios.defaults.baseURL = '/';
 
 axios.interceptors.response.use(function(response){
-  console.log(response)
   return response
 },(error)=>{
   let res = error.response;
@@ -22,8 +21,7 @@ axios.interceptors.response.use(function(response){
 });
 Vue.use(ElementUI);
 Vue.use(VueAxios,axios);
-Vue.use(VueCookies)
-
+Vue.use(VueCookies);
 new Vue({
   router,
   store, 
