@@ -5,63 +5,54 @@ Vue.use(Vuex)
 
 const state = { // 需要维护的状态
   isAdd: false,//新增问题
-  searchContent:'',//搜索的内容
-  searchList:[],//搜索返回列表
-  wsMsg:{},//ws返回的信息
-  ws:{},//websocket
-  totalUnread:0,//总的未读数量
+  searchContent: '',//搜索的内容
+  searchList: [],//搜索返回列表
+  wsMsg: {},//ws返回的信息
+  ws: {},//websocket
 }
 //getter相当于计算属性
 const getters = {
   isAdd: state => state.isAdd,
-  searchContent:state => state.searchContent,
-  searchList:state => state.searchList,
-  wsMsg:state=> state.wsMsg,
-  ws:state =>state.ws,
-  totalUnread:state=>state.totalUnread
+  searchContent: state => state.searchContent,
+  searchList: state => state.searchList,
+  wsMsg: state => state.wsMsg,
+  ws: state => state.ws,
 }
 //只有mutation 才能真的改变state，只能进行同步的操作
 const mutations = {
-  addItem(state,isAdd){
+  addItem(state, isAdd) {
     state.isAdd = isAdd;
   },
-  search(state,searchContent){
+  search(state, searchContent) {
     state.searchContent = searchContent
   },
-  setSearchList(state,searchList){
+  setSearchList(state, searchList) {
     state.searchList = searchList
   },
-  setWsMsg(state,wsMsg){
+  setWsMsg(state, wsMsg) {
     state.wsMsg = wsMsg
   },
-  setWs(state,ws){
+  setWs(state, ws) {
     state.ws = ws;
-  },
-  UpdateUnread(state,totalUnread){
-    state.totalUnread = totalUnread;
   }
-  
 }
 //可以进行异步的操作，commit到的是mutation
 const actions = {
-    setIsAdd(context,value){
-      context.commit('addItem',value)
-    },
-    search(context,value){
-      context.commit('search',value)   
-    },
-    setSearchList(context,value){
-      context.commit('setSearchList',value)
-    },
-    setWsMsg(context,value){
-      context.commit('setWsMsg',value)
-    },
-    setWs(context,value){
-      context.commit('setWs',value)
-    },
-    UpdateUnread(context,value){
-      context.commit('UpdateUnread',value)
-    }
+  setIsAdd(context, value) {
+    context.commit('addItem', value)
+  },
+  search(context, value) {
+    context.commit('search', value)
+  },
+  setSearchList(context, value) {
+    context.commit('setSearchList', value)
+  },
+  setWsMsg(context, value) {
+    context.commit('setWsMsg', value)
+  },
+  setWs(context, value) {
+    context.commit('setWs', value)
+  }
 
 }
 export default new Vuex.Store({

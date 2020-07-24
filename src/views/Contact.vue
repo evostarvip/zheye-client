@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav-header ref="header"></nav-header>
+    <nav-header ref="header" @toChat="chooseUser"></nav-header>
     <div class="ContactWrap">
       <div class="Contact">
         <div class="ContactSide">
@@ -86,28 +86,13 @@ export default {
     wsMsg: function(newVal) {
       if (newVal.command == 4) {
         console.log(newVal);
-        if (newVal.fromUser.id == util.getUser().id) {
-          console.log("我发的");
-          //代表是我发的
+        this.clearMsg();
+        if (
+          newVal.fromUser.id == util.getUser().id ||
+          this.currentUser.id == newVal.fromUser.id
+        ) {
+          console.log("更新聊天记录");
           this.chatList = this.chatList.concat(newVal);
-        } else {
-          console.log("我收的");
-          //代表是别人发给我的
-          this.userList.map(item => {
-            console.log(item);
-            //找到对应id的人
-            if (item.user.id == newVal.fromUser.id) {
-              //如果这个人现在正在进行对话 就更新聊天记录
-              if (this.currentUser.id == newVal.fromUser.id) {
-                this.chatList = this.chatList.concat(newVal);
-              } else {
-                //如果这个人没有正在对话 就更新联系人列表数据
-                item.unreadNum = newVal.unreadNum;
-                item.content = newVal.content;
-                item.time = util.changeTime(newVal.time);
-              }
-            }
-          });
         }
         setTimeout(() => {
           this.scrollBottm();
@@ -127,8 +112,6 @@ export default {
     }
     this.listenScroll();
     this.getUserList();
-    // console.log(this.$store.ws)
-    // this.ws = this.$store.ws;
   },
   methods: {
     /**加载聊天记录
@@ -159,11 +142,6 @@ export default {
         command: 3
       };
       this.wss.send(util.encode(msg));
-      util.moveAttr(this.userList, this.currentUser.id);
-      // this.userList[0].content = this.msg; //把页面上的聊天记录改变
-      console.log(util.getTime());
-      console.log(util.changeTime(util.getTime()));
-      // this.userList[0].time = util.changeTime(util.getTime()); //把页面上的时间改变
       this.msg = "";
       this.clearMsg();
       setTimeout(() => {
@@ -172,19 +150,12 @@ export default {
     },
     //选择联系人
     chooseUser(user, index) {
-      console.log(index);
-      if (index != undefined) {
-        this.$store.dispatch(
-          "UpdateUnread",
-          this.$store.state.totalUnread - this.userList[index].unreadNum
-        );
-        this.userList[index].unreadNum = 0;
-      }
       console.log(user);
       this.currentUser = user;
       this.chatList = [];
       this.getChatList(1, 1);
       this.clearMsg();
+      this.$refs["header"].getChatList();
     },
     //滚动条滚动到底部
     scrollBottm() {
@@ -220,6 +191,8 @@ export default {
     //清除未读消息
     clearMsg() {
       this.axios.get(`/clear_unread_num?fromUserId=${this.currentUser.id}`);
+      this.getUserList();
+      
     },
     //更新userlist
     updateUserList(newVal) {

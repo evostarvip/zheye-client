@@ -175,22 +175,9 @@ export default {
     wsMsg: function(newVal) {
       if (newVal.command == 4) {
         console.log(newVal);
-        let totalUnread = 0;
-        this.priviteMsg.map(item => {
-          if (item.user.id == newVal.fromUser.id) {
-            item.unreadNum = newVal.unreadNum;
-            item.content = newVal.content;
-          }
-          totalUnread += item.unreadNum;
-        });
-        this.$store.dispatch("UpdateUnread", totalUnread);
+        this.getChatList();
       }
     },
-    totalUnread: function(newVal) {
-      console.log(newVal);
-
-      this.totalNum = newVal;
-    }
   },
   mounted() {
     this.isLogin = util.isLogin();
@@ -302,26 +289,21 @@ export default {
     },
     //获取聊天列表
     getChatList() {
+      console.log("首页刷新列表");
       this.axios.get("chatList").then(res => {
         if (res.status == 200) {
           res.data.sort(util.sortByAttr("time"));
           let totalUnread = 0;
-          res.data.map(item => {
+          res.data.forEach(item => {
             totalUnread += item.unreadNum;
-            if (item.content) {
-              this.priviteMsg = this.priviteMsg.concat(item);
-            }
           });
-          this.$store.dispatch("UpdateUnread", totalUnread);
+          this.priviteMsg =res.data;
+          this.totalNum = totalUnread;
         }
       });
     },
     //跳转私信
     toChat(user, index) {
-      this.$store.dispatch(
-        "UpdateUnread",
-        this.totalNum - this.priviteMsg[index].unreadNum
-      );
       this.priviteMsg[index].unreadNum = 0;
       if (this.$route.name != "contact") {
         this.$router.push({
@@ -330,6 +312,9 @@ export default {
             user: user
           }
         });
+      } else {
+        //在concat页面
+        this.$emit("toChat", user);
       }
     }
   }
