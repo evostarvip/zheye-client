@@ -2,9 +2,9 @@
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Index from '../views/Index.vue'
-
+import Contact from '../views/Contact.vue'
+import Detail from '../views/Detail.vue'
 Vue.use(VueRouter)
-
   const routes = [
   {
     path: '/',
@@ -19,14 +19,14 @@ Vue.use(VueRouter)
       {
         path: '/detail/:id', 
         name: 'detail',
-        component: () => import('../views/Detail.vue')
+        component:Detail
       },
-      {
-        path: '/contact', 
-        name: 'contact',
-        component: () => import('../views/Contact.vue')
-      }
     ]
+  },
+  {
+    path: '/contact', 
+    name: 'contact',
+    component:Contact
   }
   
 ]

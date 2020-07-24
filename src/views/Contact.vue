@@ -1,44 +1,54 @@
 <template>
-  <div class="ContactWrap">
-    <div class="Contact">
-      <div class="ContactSide">
-        <div class="ContactSide-tip">联系人</div>
-        <div v-for="(item,index) in userList" :key="index">
-          <div class="ContactItem" @click="chooseUser(item)" :class="{ChooseItem : item.uid == chooseId}">
-            <img class="UserAvator" :src="item.avaUrl" alt="头像" />
-            <div class="UserContent">
-              <div class="UserMsg">
-                <span class="UserName">{{item.username}}</span>
-                <span class="MsgTime">{{item.time}}</span>
+  <div>
+    <nav-header ref="header"></nav-header>
+    <div class="ContactWrap">
+      <div class="Contact">
+        <div class="ContactSide">
+          <div class="ContactSide-tip">联系人</div>
+          <div v-for="(item,index) in userList" :key="index">
+            <div
+              class="ContactItem"
+              @click="chooseUser(item.user,index)"
+              :class="{ChooseItem : item.user.id == currentUser.id}"
+            >
+              <!-- 红点提示 -->
+              <el-badge :value="item.unreadNum" :max="99" :hidden="item.unreadNum==0">
+                <img class="UserAvator" :src="item.user.headUrl" alt="头像" />
+              </el-badge>
+              <div class="UserContent">
+                <div class="UserMsg">
+                  <span class="UserName">{{item.user.name}}</span>
+                  <span class="MsgTime">{{item.time}}</span>
+                </div>
+                <div class="UserSnippet">{{item.content}}</div>
               </div>
-              <div class="UserSnippet">{{item.content}}</div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="ContactBox">
-        <div class="ContactBox-header">再见</div>
-        <div class="MessageBox" ref="MessageBox">
-          <div
-            v-for="(item,index) in chatList"
-            :key="index"
-            class="Message"
-            :style="item.id == uid?'flex-direction:row-reverse':''"
-          >
-            <!-- <div class="UserHead"> -->
-            <img :src="item.avaUrl" class="UserAvator" />
-            <!-- </div> -->
-            <div class="UserMsg" :class="item.id == uid?'RightMessage':'LeftMessage'">
-              <span :style="item.id == uid?' float: right;':''">{{item.content}}</span>
+        <div class="ContactBox">
+          <div v-show="currentUser.id!=0">
+            <div class="ContactBox-header">{{currentUser.name}}</div>
+            <div class="MessageBox" ref="MessageBox">
+              <div
+                v-for="(item,index) in chatList"
+                :key="index"
+                class="Message"
+                :style="item.fromUser.id == uid?'flex-direction:row-reverse':''"
+              >
+                <img :src="item.fromUser.headUrl" class="UserAvator" />
+                <div class="UserMsg" :class="item.fromUser.id == uid?'RightMessage':'LeftMessage'">
+                  <span :style="item.fromUser.id == uid?' float: right;':''">{{item.content}}</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <!-- 输入框 -->
-        <div class="InputBox">
-          <textarea v-model="msg" class="InputTextarea" rows="3" @keyup.enter="send"></textarea>
-          <div class="InputBox-footer">
-            <div class="FooterDesc">按Enter键发送</div>
-            <button class="sendButton"  @click="send">发送</button>
+            <!-- 输入框 -->
+            <div class="InputBox">
+              <textarea v-model="msg" class="InputTextarea" rows="3" @keyup.enter="send"></textarea>
+              <div class="InputBox-footer">
+                <div class="FooterDesc">按Enter键发送</div>
+                <button class="sendButton" @click="send">发送</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -46,137 +56,182 @@
   </div>
 </template>
 <script>
+import NavHeader from "@/components/NavHeader.vue";
+
 import util from "@/utils/index.js";
+import { mapGetters, mapState } from "vuex";
+
 export default {
   name: "contact",
-  components: {},
+  components: {
+    NavHeader
+  },
   data() {
     return {
       uid: 0,
-      ws: null,
       msg: "", //聊天信息
-      chatList: [
-        {
-          id: 14,
-          content: "你说啥",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
-        },
-        {
-          id: 11,
-          content: "我说你可真好看",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
-        },
-        {
-          id: 14,
-          content: "谢谢夸奖，也就一般般啦",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
-        }
-      ], //聊天记录
-      userList: [
-        {
-          uid:1,
-          username: "再见",
-          content: "做好自己",
-          time: "6-22",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
-        },
-        {
-             uid:2,
-          username: "再见",
-          content: "做好自己",
-          time: "6-22",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
-        },
-        {
-             uid:3,
-          username: "再见",
-          content: "做好自己",
-          time: "6-22",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
-        },
-        {
-             uid:4,
-          username: "再见",
-          content: "做好自己",
-          time: "6-22",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
-        }
-      ],
-      chooseId:0
+      wss: null,
+      chatList: [], //聊天记录
+      userList: [],
+      currentPage: 1,
+      currentUser: {
+        id: 0
+      } //当前聊天的对象
     };
   },
+  computed: {
+    ...mapGetters(["wsMsg", "ws"])
+  },
+  watch: {
+    wsMsg: function(newVal) {
+      if (newVal.command == 4) {
+        console.log(newVal);
+        if (newVal.fromUser.id == util.getUser().id) {
+          console.log("我发的");
+          //代表是我发的
+          this.chatList = this.chatList.concat(newVal);
+        } else {
+          console.log("我收的");
+          //代表是别人发给我的
+          this.userList.map(item => {
+            console.log(item);
+            //找到对应id的人
+            if (item.user.id == newVal.fromUser.id) {
+              //如果这个人现在正在进行对话 就更新聊天记录
+              if (this.currentUser.id == newVal.fromUser.id) {
+                this.chatList = this.chatList.concat(newVal);
+              } else {
+                //如果这个人没有正在对话 就更新联系人列表数据
+                item.unreadNum = newVal.unreadNum;
+                item.content = newVal.content;
+                item.time = util.changeTime(newVal.time);
+              }
+            }
+          });
+        }
+        setTimeout(() => {
+          this.scrollBottm();
+        }, 200);
+      }
+    },
+    ws: function(newVal) {
+      console.log(newVal);
+      this.wss = newVal;
+    }
+  },
   mounted() {
-    this.initWebsocket();
     this.uid = util.getUser().id;
-    console.log(this.uid)
-    this.userList[0].time = util.changeTime(1584779922)
-    console.log( this.userList[0].time)
+    this.wss = this.$store.state.ws;
+    if (this.$route.params.user) {
+      this.chooseUser(this.$route.params.user);
+    }
+    this.listenScroll();
+    this.getUserList();
+    // console.log(this.$store.ws)
+    // this.ws = this.$store.ws;
   },
   methods: {
-    //创建websocket链接
-    initWebsocket() {
-      let that = this;
-      if (window.WebSocket) {
-        var ws = new WebSocket("ws://localhost:8001");
-        that.ws = ws;
-        ws.onopen = function(e) {
-          console.log("连接服务器成功");
-          let msg = {
-            type: 1,
-            uid: that.uid
-          };
-          ws.send(JSON.stringify(msg));
-        };
-        ws.onclose = function(e) {
-          console.log("服务器关闭");
-        };
-        ws.onerror = function() {
-          console.log("连接出错");
-        };
-        // 接收服务器的消息
-        ws.onmessage = function(e) {
-          let message = JSON.parse(e.data);
-          console.log(message);
-          that.chatList.push(message);
-        };
-      }
+    /**加载聊天记录
+     * @param page 聊天页数
+     * @param type 类别 1代表初次获取聊天记录 2代表加载聊天记录
+     **/
+    getChatList(page, type) {
+      this.axios
+        .get(`/chat_record?chatUserId=${this.currentUser.id}&page=${page}`)
+        .then(res => {
+          console.log(res);
+          if (res.status == 200) {
+            this.chatList = this.chatList.concat(res.data);
+            if (type == 1) {
+              this.$nextTick(() => {
+                this.scrollBottm();
+              });
+            }
+          }
+        });
     },
     //发送信息
     send() {
-      let toId;
-      if (this.uid == 14) {
-        toId = 1;
-      } else {
-        toId = 14;
-      }
       let msg = {
-        id: this.uid,
-        bridge: [this.uid, toId],
+        toUserId: this.currentUser.id,
         content: this.msg,
-        avaUrl:
-          "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
+        time: util.getTime(),
+        command: 3
       };
-      this.ws.send(JSON.stringify(msg));
+      this.wss.send(util.encode(msg));
+      util.moveAttr(this.userList, this.currentUser.id);
+      // this.userList[0].content = this.msg; //把页面上的聊天记录改变
+      console.log(util.getTime());
+      console.log(util.changeTime(util.getTime()));
+      // this.userList[0].time = util.changeTime(util.getTime()); //把页面上的时间改变
       this.msg = "";
+      this.clearMsg();
       setTimeout(() => {
         this.scrollBottm();
       }, 200);
+    },
+    //选择联系人
+    chooseUser(user, index) {
+      console.log(index);
+      if (index != undefined) {
+        this.$store.dispatch(
+          "UpdateUnread",
+          this.$store.state.totalUnread - this.userList[index].unreadNum
+        );
+        this.userList[index].unreadNum = 0;
+      }
+      console.log(user);
+      this.currentUser = user;
+      this.chatList = [];
+      this.getChatList(1, 1);
+      this.clearMsg();
     },
     //滚动条滚动到底部
     scrollBottm() {
       let el = this.$refs["MessageBox"];
       el.scrollTop = el.scrollHeight;
     },
-    //选择联系人
-    chooseUser(user){
-        this.chooseId = user.uid;
+    //监听滚动条
+    listenScroll() {
+      let ele = this.$refs["MessageBox"];
+      let that = this;
+      ele.addEventListener("scroll", function() {
+        let scr = ele.scrollTop; // 向上滚动的那一部分高度
+        let clientHeight = ele.clientHeight; // 屏幕高度也就是当前设备静态下你所看到的视觉高度
+        let scrHeight = ele.scrollHeight; // 整个网页的实际高度，兼容Pc端
+        if (scr == 0) {
+          console.log("到顶了");
+          that.getChatList(that.currentPage++, 2);
+        }
+      });
+    },
+    //获取联系人列表
+    getUserList() {
+      this.axios.get("chatList").then(res => {
+        if (res.status == 200) {
+          res.data.sort(util.sortByAttr("time"));
+          res.data.map(item => {
+            item.time = util.changeTime(item.time);
+          });
+          this.userList = res.data;
+        }
+      });
+    },
+    //清除未读消息
+    clearMsg() {
+      this.axios.get(`/clear_unread_num?fromUserId=${this.currentUser.id}`);
+    },
+    //更新userlist
+    updateUserList(newVal) {
+      for (index in this.userList) {
+        if (this.userList[index].user.id == newVal.fromUser.id) {
+          //找到了发消息的人
+          item.unreadNum = newVal.unreadNum;
+          item.content = newVal.content;
+          item.time = util.changeTime(newVal.time);
+          break;
+        }
+      }
     }
   }
 };
@@ -228,9 +283,9 @@ export default {
       }
     }
   }
-  .ChooseItem{
+  .ChooseItem {
     background: #f5f4f4;
- }
+  }
   .UserAvator {
     width: 40px;
     height: 40px;
@@ -340,5 +395,4 @@ export default {
     }
   }
 }
-
 </style>

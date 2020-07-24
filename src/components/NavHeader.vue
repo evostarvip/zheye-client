@@ -30,8 +30,7 @@
       >提问</button>
       <!-- 用户区域 -->
       <div class="AppHeader-userInfo">
-        
-        <div class="AppHeader-msg" >
+        <div class="AppHeader-msg">
           <el-popover
             v-if="isLogin"
             placement="bottom"
@@ -41,23 +40,26 @@
           >
             <div class="PriviteMessage">
               <div class="MessageTab">我的私信</div>
-              <div v-for="(item,index) in priviteMsg" :key="index">
-                <div class="MessageItem">
-                  <img :src="item.avaUrl" alt class="Avatar" />
-                  <div class="MessageUsers">
-                    <div class="MessageUsers-name">{{item.username}}</div>
-                    <div class="MessageUsers-content">{{item.content}}</div>
+              <div class="MessageList">
+                <div v-for="(item,index) in priviteMsg" :key="index">
+                  <div class="MessageItem" @click="toChat(item.user,index)">
+                    <el-badge :value="item.unreadNum" :max="99" :hidden="item.unreadNum==0">
+                      <img :src="item.user.headUrl" alt class="Avatar" />
+                    </el-badge>
+                    <div class="MessageUsers">
+                      <div class="MessageUsers-name">{{item.user.name}}</div>
+                      <div class="MessageUsers-content">{{item.content}}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-
-             <div class="MessageFooter">
-                <router-link to="/contact">查看全部私信</router-link> 
-               </div>
-              
+              <div class="MessageFooter">
+                <router-link to="/contact">查看全部私信</router-link>
+              </div>
             </div>
-
-            <span slot="reference" class="iconfont icon-weibiaoti-_fuzhi"></span>
+            <el-badge :value="totalNum" :max="99" slot="reference" :hidden="totalNum==0">
+              <span class="iconfont icon-weibiaoti-_fuzhi"></span>
+            </el-badge>
           </el-popover>
         </div>
         <div class="AppHeader-profile">
@@ -132,6 +134,7 @@
 <script>
 import Modal from "@/components/Modal.vue";
 import util from "@/utils/index.js";
+import { mapGetters } from "vuex";
 
 export default {
   name: "nav-header",
@@ -155,56 +158,46 @@ export default {
       isLogin: true,
       activeName: "login", //elmentui
       checked: false, //elmentui
-      priviteMsg: [
-        {
-          username: "滚滚",
-          content: "谢谢",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-a12b2d609fa2d5d16c10ea069419f3c3_xs.jpg"
-        },
-        {
-          username: "球球",
-          content: "再见",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
-        },
-        {
-          username: "球球",
-          content: "再见",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
-        },
-        {
-          username: "球球",
-          content: "再见",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
-        },
-        {
-          username: "球球",
-          content: "再见",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
-        },
-        {
-          username: "球球",
-          content: "再见",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
-        },
-        {
-          username: "球球",
-          content: "再见",
-          avaUrl:
-            "https://pic4.zhimg.com/v2-61d0a693ea53eb36fe08d7e05afaf768_xs.jpg"
-        }
-      ], //私信消息
-      searchItem: "" //搜索内容
+      priviteMsg: [], //私信消息
+      searchItem: "", //搜索内容
+      totalNum: 0 //总未读数
     };
+  },
+  computed: {
+    ...mapGetters(["wsMsg", "totalUnread"])
+  },
+  watch: {
+    isLogin: function(newVal) {
+      if (newVal) {
+        this.getChatList();
+      }
+    },
+    wsMsg: function(newVal) {
+      if (newVal.command == 4) {
+        console.log(newVal);
+        let totalUnread = 0;
+        this.priviteMsg.map(item => {
+          if (item.user.id == newVal.fromUser.id) {
+            item.unreadNum = newVal.unreadNum;
+            item.content = newVal.content;
+          }
+          totalUnread += item.unreadNum;
+        });
+        this.$store.dispatch("UpdateUnread", totalUnread);
+      }
+    },
+    totalUnread: function(newVal) {
+      console.log(newVal);
+
+      this.totalNum = newVal;
+    }
   },
   mounted() {
     this.isLogin = util.isLogin();
     this.user = util.getUser();
+    if (this.isLogin) {
+      this.getChatList();
+    }
   },
   methods: {
     //注册
@@ -303,9 +296,41 @@ export default {
         if (res.status == 200) {
           this.$store.dispatch("search", this.searchItem);
           this.$store.dispatch("setSearchList", res.data);
-          this.searchItem='';
+          this.searchItem = "";
         }
       });
+    },
+    //获取聊天列表
+    getChatList() {
+      this.axios.get("chatList").then(res => {
+        if (res.status == 200) {
+          res.data.sort(util.sortByAttr("time"));
+          let totalUnread = 0;
+          res.data.map(item => {
+            totalUnread += item.unreadNum;
+            if (item.content) {
+              this.priviteMsg = this.priviteMsg.concat(item);
+            }
+          });
+          this.$store.dispatch("UpdateUnread", totalUnread);
+        }
+      });
+    },
+    //跳转私信
+    toChat(user, index) {
+      this.$store.dispatch(
+        "UpdateUnread",
+        this.totalNum - this.priviteMsg[index].unreadNum
+      );
+      this.priviteMsg[index].unreadNum = 0;
+      if (this.$route.name != "contact") {
+        this.$router.push({
+          name: "contact",
+          params: {
+            user: user
+          }
+        });
+      }
     }
   }
 };
@@ -549,11 +574,9 @@ export default {
 }
 .PriviteMessage {
   width: 360px;
-  height: 439px;
+  height: 429px;
   z-index: 10;
   font-size: 14px;
-  overflow: scroll;
-  position: relative;
   .MessageTab {
     width: 100%;
     height: 38px;
@@ -561,28 +584,35 @@ export default {
     text-align: center;
     border-bottom: #ebebeb solid 1px;
     background: #ffffff;
-    position: sticky;
-    top: 0;
-    left: 0;
     cursor: pointer;
+    z-index: 11;
   }
-
+  .MessageList {
+    height: 350px;
+    overflow: scroll;
+  }
   .MessageItem {
     display: flex;
     align-items: center;
     padding: 12px;
+    cursor: pointer;
+    // overflow: scroll;
     .Avatar {
       width: 40px;
       height: 40px;
       margin-right: 10px;
       border-radius: 6px;
     }
-    .MessageUsers-name {
-      font-size: 15px;
+    .MessageUsers {
+      margin-left: 10px;
+      .MessageUsers-name {
+        font-size: 15px;
+      }
+      .MessageUsers-content {
+        color: $fontColor;
+      }
     }
-    .MessageUsers-content {
-      color: $fontColor;
-    }
+
     &:hover {
       background: #ebebeb;
     }
@@ -592,9 +622,6 @@ export default {
     height: 38px;
     line-height: 38px;
     text-align: center;
-    position: sticky;
-    bottom: 0;
-    left: 0;
     border-top: #ebebeb solid 1px;
     background: #ffffff;
     cursor: pointer;

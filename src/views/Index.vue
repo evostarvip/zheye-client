@@ -13,7 +13,8 @@
           </div>
         </el-tab-pane>
       </el-tabs>
-      <div class="Loading"></div>
+      <div class="Loading" v-show="isLoad">拼命加载中</div>
+      <div class="Loading" v-show="isEnd">到底了</div>
     </div>
     <div class="GlobalSideBar">
       <global-side-bar></global-side-bar>
@@ -25,7 +26,6 @@ import FeedItem from "@/components/FeedItem.vue";
 import GlobalSideBar from "@/components/GlobalSideBar.vue";
 import { mapGetters } from "vuex";
 import util from "@/utils/index.js";
-import { Loading } from "element-ui";
 
 let Load;
 export default {
@@ -54,7 +54,8 @@ export default {
       followList: [],
       isLoad: false,
       recPage: 1, //推荐页面page
-      attPage: 1 //关注页面page
+      attPage: 1, //关注页面page
+      isEnd:false,
     };
   },
   mounted() {
@@ -69,8 +70,10 @@ export default {
         if (res.status == 200) {
           this.feedList = this.feedList.concat(res.data);
           this.$store.dispatch("setIsAdd", false);
-          Load.close();
           this.isLoad = false;
+          if(!res.data){
+            this.isEnd = true;
+          }
         }
       });
     },
@@ -79,7 +82,10 @@ export default {
       this.axios.get(`/followList?page=${this.attPage}`).then(res => {
         if (res.status == 200) {
           this.followList = this.followList.concat(res.data);
-          Load.close();
+           if (Load) {
+            Load.close();
+            Load="";
+          }
           this.isLoad = false;
         }
       });
@@ -91,21 +97,17 @@ export default {
         let scr = ele.scrollTop; // 向上滚动的那一部分高度
         let clientHeight = ele.clientHeight; // 屏幕高度也就是当前设备静态下你所看到的视觉高度
         let scrHeight = ele.scrollHeight; // 整个网页的实际高度，兼容Pc端
-        if (scr + clientHeight + 50 >= scrHeight) {
+        if (scr + clientHeight + 5 >= scrHeight) {
           console.log("到底了");
-          Load = Loading.service({
-            target: ".Loading",
-            fullscreen: false,
-            spinner: "el-icon-loading",
-            text: "拼命加载中"
-          });
-          that.isLoad = true;
-          if (that.activeName == "recommend") {
-            that.recPage++;
-            that.getContent();
-          } else {
-            that.attPage++;
-            that.getAttention();
+          if (that.isLoad == false||this.isEnd == false) {
+            that.isLoad = true;
+            if (that.activeName == "recommend") {
+              that.recPage++;
+              that.getContent();
+            } else {
+              that.attPage++;
+              that.getAttention();
+            }
           }
         }
       });
@@ -160,5 +162,8 @@ export default {
 }
 .Loading {
   height: 50px;
+  text-align: center;
+  color: $mainColor;
+
 }
 </style>

@@ -23,7 +23,7 @@
           <span class="iconfont icon-jia" v-if="!user.isFollow"></span>
           <span>{{user.isFollow?'取消关注':'关注'}}</span>
         </div>
-        <div class="ChatBtn">
+        <div class="ChatBtn" @click="toChat()">
           <span class="iconfont icon-xiaoxi"></span>
           <span>发私信</span>
         </div>
@@ -54,6 +54,15 @@ export default {
           this.user.isFollow = !this.user.isFollow;
         });
       }
+    },
+    //私信
+    toChat(){
+      this.$router.push({
+        name:'contact',
+        params:{
+          user : this.user
+        }
+      })
     }
   }
 };
