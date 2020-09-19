@@ -180,11 +180,16 @@ export default {
     },
   },
   mounted() {
+    console.log('mounted')
     this.isLogin = util.isLogin();
     this.user = util.getUser();
     if (this.isLogin) {
       this.getChatList();
     }
+  },
+  updated(){
+    //更新
+     this.isLogin = util.isLogin();
   },
   methods: {
     //注册
